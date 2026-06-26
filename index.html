@@ -1,0 +1,3090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Anaya Gandhi &mdash; Data Scientist</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#162040;--navy2:#233066;--navy-pale:#E8ECF4;
+  --white:#FFFFFF;--off:#F8F5F5;--ink:#111318;--mid:#4A4E5A;--soft:#8C9AB0;
+  --crimson:#C0152A;--crimson2:#E8394F;--crimson-pale:#FEF0F2;
+  --steel:#8C9AB0;--steel-light:#EEF1F6;
+  --border:#DDE1EA;
+  --exp-bg:#162040;
+  --nav-h:57px;
+  --page-dur:.48s;
+}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Inter',sans-serif;background:var(--white);color:var(--ink);line-height:1.6}
+
+/* PAGE SYSTEM */
+.site{height:100%;position:relative}
+.viewport{position:relative;height:100vh;overflow:hidden}
+.page{
+  position:absolute;inset:0;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(28px);
+  transition:opacity var(--page-dur) ease,transform var(--page-dur) ease,visibility var(--page-dur);
+  overflow:hidden;
+}
+.page.is-active{opacity:1;visibility:visible;pointer-events:auto;transform:none;z-index:10}
+.page.is-exiting-forward{opacity:0;transform:translateY(-28px);z-index:5}
+.page.is-exiting-back{opacity:0;transform:translateY(28px);z-index:5}
+.page.is-entering-forward{transform:translateY(28px)}
+.page.is-entering-back{transform:translateY(-28px)}
+.page--scrollable .page-scroll,.page--scrollable .page-main.page-scroll{height:100%;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.page-shell{display:flex;flex-direction:column;height:100%}
+.page-main{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.page--scrollable .page-main:not(.page-scroll){overflow-y:auto}
+.page-inner{width:100%;flex:1;display:flex;flex-direction:column;justify-content:center}
+.page.is-active .page-enter>*{animation:pageFadeUp .6s ease both}
+.page.is-active .page-enter>*:nth-child(1){animation-delay:.05s}
+.page.is-active .page-enter>*:nth-child(2){animation-delay:.12s}
+.page.is-active .page-enter>*:nth-child(3){animation-delay:.18s}
+@keyframes pageFadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes dashPulse{0%,100%{opacity:1}50%{opacity:.55}}
+.hero-dash.pulse-once{animation:dashPulse 2s ease 1}
+
+/* PAGE RAIL */
+.page-rail{
+  position:fixed;right:1.8rem;top:50%;transform:translateY(-50%);
+  z-index:150;display:flex;flex-direction:column;align-items:flex-end;gap:.65rem
+}
+.page-dots{display:flex;flex-direction:column;gap:.55rem}
+.page-dot{
+  width:8px;height:8px;border-radius:50%;border:1.5px solid var(--navy);
+  background:transparent;cursor:pointer;padding:0;opacity:.35;transition:opacity .2s,transform .2s,background .2s
+}
+.page-dot.is-active{opacity:1;background:var(--navy);transform:scale(1.2)}
+.page-counter{font-size:.65rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-top:.25rem}
+.page-hint{
+  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
+  font-size:.68rem;font-weight:500;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--soft);z-index:150;transition:opacity .4s
+}
+.page-hint.is-hidden{opacity:0;pointer-events:none}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;justify-content:space-between;align-items:center;padding:1.1rem 3.5rem;background:rgba(255,255,255,0.96);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.15rem;font-weight:900;color:var(--navy);letter-spacing:-0.01em;cursor:pointer}
+.nav-links{display:flex;gap:2.2rem;list-style:none}
+.nav-links a{font-size:0.78rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--mid);text-decoration:none;transition:color .2s;position:relative}
+.nav-links a:hover{color:var(--navy)}
+.nav-links a.is-active{color:var(--navy)}
+.nav-links a.is-active::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--crimson)}
+
+/* HERO + INTRO */
+#about{background:var(--white)}
+.intro-hero{display:grid;grid-template-columns:1fr 420px;position:relative;min-height:min(74vh,700px);border-bottom:1px solid var(--border)}
+.intro-hero .hero-left{padding:calc(var(--nav-h) + 2.5rem) 3.5rem 2.5rem;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;background:var(--white)}
+.intro-about{padding:3rem 3.5rem 2rem;max-width:1200px;margin:0 auto;width:100%}
+.hero-bleed-text{
+  position:absolute;bottom:-2rem;left:-1rem;
+  font-family:'Playfair Display',serif;font-size:clamp(9rem,18vw,16rem);font-weight:900;
+  color:rgba(22,32,64,0.055);white-space:nowrap;line-height:1;pointer-events:none;user-select:none;
+  letter-spacing:-0.05em;z-index:0
+}
+.hero-content{position:relative;z-index:1}
+.hero-eyebrow{font-size:0.72rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:2rem;display:flex;align-items:center;gap:0.8rem}
+.hero-eyebrow::before{content:'';width:2rem;height:1px;background:var(--crimson)}
+.hero-name{font-family:'Playfair Display',serif;font-size:clamp(4rem,7vw,6.5rem);font-weight:900;line-height:0.95;letter-spacing:-0.03em;color:var(--ink)}
+.hero-name .italic{font-style:italic;color:var(--navy)}
+.hero-dash{
+  font-family:'Playfair Display',serif;font-size:clamp(4rem,7vw,6.5rem);font-weight:900;
+  color:var(--crimson);line-height:0.95;display:block;letter-spacing:-0.03em;
+}
+.hero-tagline{font-size:.98rem;font-weight:400;color:var(--mid);max-width:440px;margin-top:2rem;line-height:1.9}
+.hero-tagline strong{font-weight:600;color:var(--ink)}
+.hero-ctas{margin-top:2.5rem;display:flex;gap:1rem}
+.btn-p{background:var(--navy);color:#fff;padding:.85rem 2rem;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;border:none;cursor:pointer;display:inline-block;transition:background .2s,transform .15s}
+.btn-p:hover{background:var(--navy2);transform:translateY(-1px)}
+.btn-g{background:transparent;color:var(--crimson);border:1.5px solid var(--crimson);padding:.85rem 2rem;font-family:'Inter',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;display:inline-block;transition:background .2s,color .2s}
+.btn-g:hover{background:var(--crimson);color:#fff}
+
+/* HERO RIGHT &mdash; PHOTO fills the whole panel */
+.hero-right{position:relative;overflow:hidden;height:100%}
+.hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 10%;display:block;filter:contrast(1.04) saturate(0.9)}
+.hero-right-overlay{position:absolute;inset:0;background:linear-gradient(to bottom, rgba(22,32,64,0.15) 0%, rgba(22,32,64,0) 40%, rgba(22,32,64,0.78) 100%);z-index:1}
+.hero-right-bottom{position:absolute;bottom:0;left:0;right:0;z-index:2;padding:2rem 2.5rem}
+.hero-location-tag{font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(140,154,176,.9);margin-bottom:.4rem}
+.hero-right-name{font-family:'Playfair Display',serif;font-size:1.05rem;line-height:1.5;font-style:italic;color:rgba(255,255,255,.82)}
+.hero-right-accent{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--crimson),var(--crimson2));z-index:3}
+/* DRAMATIC DIAGONAL DIVIDER */
+.diagonal-divider{height:80px;background:var(--white);clip-path:polygon(0 0,100% 60px,100% 80px,0 80px);position:relative;z-index:2}
+.diagonal-divider.dark{background:var(--navy);clip-path:polygon(0 20px,100% 0,100% 80px,0 80px)}
+.diagonal-divider.from-dark{background:var(--white);clip-path:polygon(0 20px,100% 0,100% 80px,0 80px)}
+
+/* ABOUT */
+.about-wrap{display:grid;grid-template-columns:1fr 1.6fr;gap:3rem;align-items:start;width:100%}
+.section-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--steel);margin-bottom:1.5rem;display:flex;align-items:center;gap:.7rem}
+.section-eyebrow::before{content:'';width:1.5rem;height:1px;background:var(--steel)}
+.about-headline{font-family:'Playfair Display',serif;font-size:clamp(2.2rem,3.5vw,3.2rem);font-weight:900;line-height:1.1;letter-spacing:-0.02em}
+.about-headline em{font-style:italic;color:var(--crimson)}
+.about-body p{font-size:.95rem;color:var(--mid);line-height:1.9;margin-bottom:1.1rem}
+.about-body p strong{font-weight:600;color:var(--ink)}
+.looking-for{margin-top:2.5rem;background:var(--navy);padding:2rem;position:relative;overflow:hidden}
+.looking-for::before{
+  content:'"';position:absolute;top:-1rem;right:1rem;
+  font-family:'Playfair Display',serif;font-size:8rem;font-weight:900;
+  color:rgba(255,255,255,.06);line-height:1;pointer-events:none
+}
+.looking-for-label{font-size:.68rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:.8rem}
+.looking-for p{font-size:.9rem;color:rgba(255,255,255,.82);line-height:1.7}
+.looking-for p strong{color:#fff}
+.about-chips{margin-top:2rem;display:flex;flex-wrap:wrap;gap:.5rem}
+.chip{font-size:.72rem;font-weight:500;letter-spacing:.03em;padding:.4rem .9rem;border:1px solid var(--border);color:var(--mid);background:var(--off)}
+.chip-navy{background:var(--navy-pale);border-color:var(--navy-pale);color:var(--navy);font-weight:600}
+
+
+body[data-page="experience"] nav{background:rgba(255,255,255,.97);border-bottom-color:var(--border)}
+body[data-page="experience"] .nav-logo{color:var(--navy)}
+body[data-page="experience"] .nav-links a{color:var(--mid)}
+body[data-page="experience"] .nav-links a:hover{color:var(--navy)}
+body[data-page="experience"] .nav-links a.is-active{color:var(--navy)}
+body[data-page="experience"] .page-dot{border-color:rgba(255,255,255,.4)}
+body[data-page="experience"] .page-dot.is-active{background:var(--crimson);border-color:var(--crimson)}
+body[data-page="experience"] .page-counter{color:rgba(255,255,255,.4)}
+#experience{background:var(--exp-bg)}
+.exp-wrap{padding:calc(var(--nav-h) + 2rem) 3.5rem 3rem;position:relative;overflow:hidden}
+.page--scrollable .exp-wrap{display:block;min-height:0}
+.exp-bg{position:absolute;right:-4rem;top:50%;transform:translateY(-50%);font-family:'Playfair Display',serif;font-size:20rem;font-weight:900;color:rgba(255,255,255,.022);pointer-events:none;user-select:none;line-height:1;letter-spacing:-.05em}
+.exp-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1;width:100%}
+.exp-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;flex-wrap:wrap;gap:1.5rem}
+.exp-tabs{display:flex;gap:.5rem}
+.exp-tab{
+  font-size:.72rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  padding:.65rem 1.4rem;border:1.5px solid rgba(255,255,255,.18);background:transparent;
+  color:rgba(255,255,255,.45);cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s
+}
+.exp-tab:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+.exp-tab.is-active{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.exp-panels{position:relative;min-height:0}
+.exp-panel{
+  opacity:0;visibility:hidden;position:absolute;inset:0;
+  transform:translateY(12px);transition:opacity .35s ease,transform .35s ease,visibility .35s;
+  pointer-events:none;
+}
+.exp-panel.is-active{opacity:1;visibility:visible;position:relative;transform:none;pointer-events:auto;inset:unset}
+.exp-type-badge{
+  display:inline-block;font-size:.6rem;font-weight:700;letter-spacing:.1em;
+  padding:.2rem .55rem;margin-bottom:.6rem;background:rgba(192,21,42,.3);color:#F4A0A8
+}
+.exp-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,4vw,4rem);font-weight:900;color:#fff;line-height:1.05;letter-spacing:-.02em}
+.exp-title em{font-style:italic;color:var(--crimson2)}
+.exp-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.exp-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);padding:2rem;transition:background .2s}
+.exp-card:hover{background:rgba(255,255,255,.08)}
+.exp-period{font-size:.68rem;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--crimson2);margin-bottom:.8rem}
+.exp-role{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:700;color:#fff;line-height:1.2;margin-bottom:.25rem}
+.exp-company{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:1rem}
+.exp-bullets{list-style:none;display:flex;flex-direction:column;gap:.5rem}
+.exp-bullets li{font-size:.83rem;color:rgba(255,255,255,.68);line-height:1.6;padding-left:1rem;position:relative}
+.exp-bullets li::before{content:'→';position:absolute;left:0;color:var(--crimson2)}
+.exp-tag-row{margin-top:0.5rem;display:flex;flex-wrap:wrap;gap:.4rem}
+.exp-tag{font-size:.65rem;font-weight:600;letter-spacing:.05em;padding:.25rem .6rem;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5)}
+
+
+/* PROJECTS */
+#projects{background:var(--off)}
+.projects-scroll{padding:calc(var(--nav-h) + 1.5rem) 3.5rem 1.5rem;position:relative}
+.projects-bleed{position:absolute;top:clamp(8rem,40vh,28rem);right:-1rem;font-family:'Playfair Display',serif;font-size:clamp(9rem,16vw,14rem);font-weight:900;color:rgba(22,32,64,.04);white-space:nowrap;line-height:1;pointer-events:none;user-select:none;letter-spacing:-.05em;z-index:0}
+.projects-inner{max-width:1200px;margin:0 auto;position:relative;z-index:1}
+.projects-header{margin-bottom:2.5rem;display:grid;grid-template-columns:1fr auto;align-items:end;gap:2rem}
+.projects-title{font-family:'Playfair Display',serif;font-size:clamp(2.5rem,4vw,4rem);font-weight:900;line-height:1.05;letter-spacing:-.02em}
+.projects-title em{font-style:italic;color:var(--crimson)}
+.projects-sub{font-size:.82rem;color:var(--steel);max-width:240px;text-align:right;line-height:1.6}
+.proj-list{display:flex;flex-direction:column;gap:1px;background:var(--border)}
+
+/* PROJECT CARD */
+.proj-card{background:var(--white);overflow:hidden}
+.proj-head{padding:2rem 2.5rem;display:grid;grid-template-columns:4rem 1fr auto;gap:1.5rem;align-items:center;cursor:pointer;transition:background .2s}
+.proj-head:hover{background:var(--off)}
+.proj-num{font-family:'Playfair Display',serif;font-size:3.5rem;font-weight:900;color:var(--border);line-height:1;transition:color .3s}
+.proj-card.open .proj-num{color:var(--crimson)}
+.proj-meta .proj-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.5rem}
+.tag{font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.22rem .6rem}
+.tag-navy{background:var(--steel-light);color:var(--navy)}
+.tag-gold{background:var(--crimson-pale);color:var(--crimson)}
+.proj-title-text{font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:700;color:var(--ink);line-height:1.25}
+.proj-excerpt{font-size:.82rem;color:var(--steel);margin-top:.3rem;line-height:1.55}
+.proj-toggle{display:flex;align-items:center;gap:.6rem;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);white-space:nowrap}
+.toggle-box{width:28px;height:28px;border:1.5px solid var(--navy);display:flex;align-items:center;justify-content:center;font-size:.75rem;transition:transform .35s,background .2s,color .2s}
+.proj-card.open .toggle-box{transform:rotate(180deg);background:var(--crimson);border-color:var(--crimson);color:#fff}
+
+/* PROJECT BODY */
+.proj-body{max-height:0;overflow:hidden;transition:max-height .55s cubic-bezier(.4,0,.2,1)}
+.proj-card.open .proj-body{max-height:1400px}
+.proj-inner{padding:2.5rem;border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:stretch}
+.proj-desc{display:flex;flex-direction:column}
+.proj-desc h4{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin-bottom:.65rem;margin-top:1.2rem}
+.proj-desc h4:first-child{margin-top:0}
+.proj-desc p{font-size:.86rem;color:var(--mid);line-height:1.8;margin-bottom:.6rem}
+.results{margin-top:.5rem;display:flex;flex-direction:column;gap:.4rem}
+.res{font-size:.82rem;color:var(--mid);display:flex;align-items:flex-start;gap:.5rem;line-height:1.5}
+.res::before{content:'→';color:var(--crimson);font-weight:700;flex-shrink:0;margin-top:.05rem}
+.proj-interactive{background:var(--off);border:1px solid var(--border);padding:1.5rem;display:flex;flex-direction:column;flex:1}
+.demo-label{font-size:.65rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--navy);margin-bottom:1rem;display:flex;align-items:center;gap:.5rem}
+.demo-label .pulse{width:6px;height:6px;background:var(--crimson);border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.25}}
+input[type=range]{width:100%;-webkit-appearance:none;height:3px;background:var(--border);cursor:pointer;border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;background:var(--navy);border-radius:50%}
+.slider-row{display:flex;align-items:center;gap:.75rem;margin-top:.65rem;font-size:.75rem;color:var(--mid)}
+.slider-row label{min-width:100px;font-weight:500}
+.slider-val{min-width:2.5rem;text-align:right;font-weight:700;color:var(--crimson)}
+canvas{display:block;width:100%}
+
+/* CONTACT STRIP &mdash; footer bar */
+.page-contact{background:var(--navy);flex-shrink:0;position:relative;overflow:hidden}
+.page-contact::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(192,21,42,.5) 30%,rgba(192,21,42,.5) 70%,transparent)}
+.contact-strip-inner{max-width:1200px;margin:0 auto;padding:1.3rem 3.5rem;display:flex;justify-content:space-between;align-items:center;gap:2rem}
+.contact-strip-left{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:#fff;white-space:nowrap}
+.contact-strip-left em{font-style:italic;color:var(--crimson2)}
+.contact-strip-links{display:flex;gap:2rem;align-items:center}
+.contact-strip-link{font-size:.72rem;color:rgba(255,255,255,.35);text-decoration:none;letter-spacing:.07em;transition:color .2s;white-space:nowrap}
+.contact-strip-link:hover{color:rgba(255,255,255,.8)}
+.contact-strip-cta{font-size:.68rem;font-weight:700;letter-spacing:.13em;text-transform:uppercase;padding:.5rem 1.2rem;border:1px solid rgba(192,21,42,.5);color:var(--crimson2);text-decoration:none;transition:all .2s;white-space:nowrap;background:rgba(192,21,42,.1)}
+.contact-strip-cta:hover{background:var(--crimson);color:#fff;border-color:var(--crimson)}
+.contact-strip-copy{font-size:.65rem;color:rgba(255,255,255,.18);letter-spacing:.06em;white-space:nowrap}
+
+/* TOOLKIT MARQUEE */
+.toolkit-section{margin-top:4rem;padding-top:3rem;border-top:1px solid rgba(255,255,255,.08)}
+.toolkit-header{text-align:center;margin-bottom:2rem}
+.marquee{overflow:hidden;white-space:nowrap;margin-bottom:1rem}
+.marquee-track{display:inline-flex;gap:1rem;animation:marquee 35s linear infinite}
+.marquee-reverse .marquee-track{animation-direction:reverse}
+.marquee span{padding:.55rem 1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.7);font-size:.78rem;letter-spacing:.04em}
+.toolkit-resume{display:block;width:max-content;margin:2rem auto 0;color:var(--crimson2);text-decoration:none;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase}
+@keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+
+/* CONTACT PAGE */
+#contact{background:var(--white)}
+body[data-page="contact"] nav{background:rgba(255,255,255,.97);border-bottom-color:var(--border)}
+body[data-page="contact"] .nav-logo{color:var(--navy)}
+body[data-page="contact"] .nav-links a{color:var(--mid)}
+body[data-page="contact"] .nav-links a:hover{color:var(--navy)}
+body[data-page="contact"] .nav-links a.is-active{color:var(--navy)}
+body[data-page="contact"] .page-dot{border-color:var(--navy)}
+body[data-page="contact"] .page-dot.is-active{background:var(--crimson);border-color:var(--crimson)}
+body[data-page="contact"] .page-counter{color:var(--steel)}
+body[data-page="contact"] .page-hint{color:var(--steel)}
+.contact-wrap{
+  padding:calc(var(--nav-h) + 3rem) 3.5rem 3rem;
+  max-width:1200px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;
+  height:100%;position:relative;z-index:1
+}
+.contact-bleed{position:absolute;bottom:-1.5rem;left:-1rem;font-family:'Playfair Display',serif;font-size:clamp(9rem,18vw,16rem);font-weight:900;color:rgba(22,32,64,.04);white-space:nowrap;line-height:1;pointer-events:none;user-select:none;letter-spacing:-.05em;z-index:0}
+.contact-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--crimson);margin-bottom:1.5rem;display:flex;align-items:center;gap:.7rem}
+.contact-eyebrow::before{content:'';width:1.5rem;height:1px;background:var(--crimson)}
+.contact-heading{font-family:'Playfair Display',serif;font-size:clamp(3rem,6vw,5.5rem);font-weight:900;line-height:.95;letter-spacing:-.03em;color:var(--ink);margin-bottom:1.5rem}
+.contact-heading em{font-style:italic;color:var(--crimson)}
+.contact-subtext{font-size:.95rem;color:var(--mid);line-height:1.85;margin-bottom:2rem;max-width:400px}
+.contact-available{display:flex;align-items:center;gap:.75rem}
+.contact-available-dot{width:8px;height:8px;background:#2D9E5F;border-radius:50%;animation:pulse 2s infinite;flex-shrink:0}
+.contact-available-text{font-size:.78rem;color:var(--steel);letter-spacing:.02em}
+.contact-right{display:flex;flex-direction:column;gap:.65rem}
+.clink{
+  display:flex;align-items:center;gap:1.1rem;
+  text-decoration:none;
+  padding:1.1rem 1.3rem;
+  border:1px solid var(--border);
+  background:var(--off);
+  transition:background .2s,border-color .2s,transform .15s,box-shadow .2s;
+}
+.clink:hover{background:#fff;border-color:var(--crimson);transform:translateX(4px);box-shadow:0 4px 20px rgba(192,21,42,.08)}
+.clink-icon{
+  width:40px;height:40px;flex-shrink:0;
+  background:var(--steel-light);
+  border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1rem;color:var(--navy);
+}
+.clink-label{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--steel);margin-bottom:.18rem}
+.clink-value{font-size:.88rem;color:var(--ink)}
+.clink-arrow{margin-left:auto;font-size:.85rem;color:var(--border);transition:color .2s,transform .2s}
+.clink:hover .clink-arrow{color:var(--crimson);transform:translateX(3px)}
+.clink-cv{background:var(--navy);border-color:var(--navy)}
+.clink-cv .clink-icon{background:rgba(192,21,42,.15);border-color:rgba(192,21,42,.25);color:var(--crimson2)}
+.clink-cv .clink-label{color:rgba(255,255,255,.45)}
+.clink-cv .clink-value{color:#fff}
+.clink-cv .clink-arrow{color:rgba(255,255,255,.25)}
+.clink-cv:hover{background:var(--navy2);border-color:var(--navy2);transform:translateX(4px)}
+.clink-cv:hover .clink-arrow{color:var(--crimson2)}
+.contact-divider{height:1px;background:var(--border);margin:.2rem 0}
+.contact-footer-note{font-size:.68rem;color:var(--steel);letter-spacing:.05em;text-align:center;padding-top:.5rem}
+
+@media(max-width:900px){
+  .contact-wrap{grid-template-columns:1fr;gap:2.5rem;padding-left:1.5rem;padding-right:1.5rem;align-items:start;overflow-y:auto}
+}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  nav{padding:1rem 1.5rem}
+  .nav-links{gap:1rem}
+  .nav-links a{font-size:.68rem}
+  .page-rail{right:.75rem}
+  .page-counter{display:none}
+  #about .intro-hero{grid-template-columns:1fr}
+  #about .hero-right{display:none}
+  #about .intro-hero .hero-left{padding:calc(var(--nav-h) + 1.5rem) 1.5rem 1.5rem}
+  .intro-about,.about-wrap,.exp-wrap,.skills-scroll,.projects-scroll{padding-left:1.5rem;padding-right:1.5rem}
+  .contact-strip-inner,.contact-page-inner{padding-left:1.5rem;padding-right:1.5rem}
+  .about-wrap{grid-template-columns:1fr;gap:2rem}
+  .exp-grid,.skills-grid,.skills-play-grid,.contact-inner,.proj-inner{grid-template-columns:1fr}
+  .skill-spotlight{grid-template-columns:1fr}
+  .skill-spot-meta{text-align:left}
+  .skill-spot-bar-wrap{margin-left:0}
+  .exp-header{flex-direction:column;align-items:flex-start}
+  .exp-tabs{width:100%}
+  .exp-tab{flex:1;text-align:center}
+  .projects-header{grid-template-columns:1fr}
+  .projects-sub{text-align:left;max-width:none}
+}
+@media(max-width:600px){
+  .page-rail{bottom:1rem;top:auto;transform:none;right:auto;left:50%;transform:translateX(-50%);flex-direction:row;align-items:center}
+  .page-dots{flex-direction:row}
+}
+@media(prefers-reduced-motion:reduce){
+  .page,.exp-panel{transition:none}
+  .page.is-active .page-enter>*{animation:none}
+  .hero-dash.pulse-once{animation:none}
+}
+
+/* SPOTIFY PAGE */
+#spotify{background:var(--off)}
+.spotify-wrap{padding:calc(var(--nav-h) + 1.5rem) 3.5rem 3rem}
+.spotify-inner{max-width:1200px;margin:0 auto}
+.sp-back{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--navy);cursor:pointer;margin-bottom:2rem;opacity:.6;transition:opacity .2s}
+.sp-back:hover{opacity:1}
+.sp-back-arrow{font-size:.9rem}
+.sp-header{margin-bottom:2.5rem}
+.sp-tags{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.sp-eyebrow{font-size:.7rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--steel);margin-bottom:.75rem}
+.sp-title{font-family:'Playfair Display',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:900;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.sp-gh{display:inline-flex;align-items:center;gap:.4rem;font-size:.72rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--steel);text-decoration:none;margin-top:1rem;transition:color .2s}
+.sp-gh:hover{color:var(--navy)}
+.sp-gh svg{width:15px;height:15px;fill:currentColor;flex-shrink:0}
+.hero-socials{display:flex;gap:.75rem;margin-top:1.5rem}
+.hero-social{width:36px;height:36px;border:1.5px solid var(--border);display:flex;align-items:center;justify-content:center;text-decoration:none;color:var(--steel);transition:color .2s,border-color .2s}
+.hero-social:hover{color:var(--navy);border-color:var(--navy)}
+.hero-social svg{width:16px;height:16px;fill:currentColor}
+.sp-title em{font-style:italic;color:var(--crimson)}
+.sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;margin-bottom:3rem}
+.sp-grid>.sp-desc,.sp-grid>.sp-right{display:flex;flex-direction:column}
+.sp-grid>.sp-desc{justify-content:flex-start}
+.sp-desc .sp-section{margin-bottom:1.5rem}
+.sp-h4{font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--navy);margin-bottom:.65rem}
+.sp-desc p{font-size:.86rem;color:var(--mid);line-height:1.8;margin-bottom:.6rem}
+.sp-desc p strong{color:var(--ink);font-weight:600}
+.sp-cluster-match{position:relative;border:1px solid var(--border);background:#fff;padding:.75rem 1rem;margin-bottom:.4rem;overflow:hidden}
+.sp-match-bar{position:absolute;left:0;top:0;bottom:0;opacity:.08;transition:width .4s ease,background .3s}
+.sp-match-label{display:flex;align-items:center;gap:.5rem;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;position:relative}
+.sp-match-pct{font-size:.72rem;color:var(--crimson);font-weight:700;letter-spacing:.05em;margin-top:.2rem;position:relative}
+.sp-cluster-ref{margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--border)}
+.sp-ref-title{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--soft);margin-bottom:.5rem}
+.sp-ref-row{font-size:.72rem;color:var(--mid);display:flex;align-items:center;gap:.4rem;margin-bottom:.3rem;line-height:1.4}
+.sp-ref-row strong{color:var(--ink)}
+/* Paper section */
+.sp-paper-section{border-top:1px solid var(--border);padding-top:2rem}
+.sp-paper-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
+.sp-paper-embed{background:#fff;border:1px solid var(--border)}
+.sp-paper-pages{display:flex;overflow:hidden;position:relative;min-height:500px}
+.sp-paper-page{min-width:100%;transition:transform .4s ease}
+.sp-paper-page img{width:100%;display:block;border:none}
+.sp-paper-nav{display:flex;align-items:center;justify-content:center;gap:1.5rem;padding:.75rem;border-top:1px solid var(--border);background:var(--off)}
+.sp-pnav-btn{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.4rem .9rem;border:1.5px solid var(--navy);background:transparent;color:var(--navy);cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s}
+.sp-pnav-btn:hover{background:var(--navy);color:#fff}
+.sp-pnav-btn:disabled{opacity:.3;cursor:not-allowed}
+.sp-right-stack{display:flex;flex-direction:column;gap:1.25rem}
+@media(max-width:900px){.spotify-wrap{padding-left:1.5rem;padding-right:1.5rem}.sp-grid{grid-template-columns:1fr}}
+.als-btn,.nf-btn,.trading-btn{font-size:.7rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.4rem .8rem;border:1px solid var(--border);background:var(--white);cursor:pointer;color:var(--mid);transition:all .15s;font-family:'Inter',sans-serif}
+.als-btn.active,.nf-btn.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.trading-btn{background:var(--navy);color:#fff;border:none;padding:.55rem 1.2rem;width:100%;margin-top:.5rem}
+.trading-btn:hover{background:var(--navy2)}
+.trading-btn.ghost{background:transparent;color:var(--navy);border:1.5px solid var(--navy)}
+.als-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-top:.6rem}
+.als-metric{background:#fff;border:1px solid var(--border);padding:.6rem .5rem;text-align:center}
+.als-metric-val{font-family:'Playfair Display',serif;font-size:1.2rem;font-weight:700;color:var(--navy)}
+.als-metric-label{font-size:.6rem;color:var(--soft);margin-top:.1rem}
+.als-toggle-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem}
+.cluster-result{padding:1rem;margin-top:.75rem;text-align:center;border:1px solid var(--border);background:#fff}
+.cluster-name{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700}
+.cluster-desc{font-size:.75rem;color:var(--mid);margin-top:.25rem;line-height:1.5}
+.cluster-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:.4rem}
+.nf-row{display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.6rem}
+.net-tip{font-size:.7rem;color:var(--soft);font-style:italic;min-height:1.4rem;margin-top:.4rem}
+.trading-controls{display:grid;grid-template-columns:1fr 1fr;gap:.5rem;margin-bottom:.75rem}
+.t-ctrl label{font-size:.68rem;font-weight:600;color:var(--mid);display:block;margin-bottom:.2rem}
+.trade-btns{display:flex;gap:.5rem}
+</style>
+</head>
+<body>
+
+<div class="site">
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" data-nav="about" role="button" tabindex="0">AG.</div>
+  <ul class="nav-links">
+    <li><a href="#about" data-nav="about">About</a></li>
+    <li><a href="#projects" data-nav="projects">Research</a></li>
+    <li><a href="#experience" data-nav="experience">Experience</a></li>
+    <li><a href="#contact" data-nav="contact">Contact</a></li>
+  </ul>
+</nav>
+
+<main class="viewport" aria-live="polite">
+
+<!-- ABOUT (Hero + About merged) -->
+<section class="page page--scrollable is-active" id="about" data-page="about">
+  <div class="page-main page-scroll">
+  <div class="intro-page page-enter">
+  <div class="intro-hero">
+  <div class="hero-left">
+    <div class="hero-bleed-text">ANAYA</div>
+    <div class="hero-content">
+      <p class="hero-eyebrow">Data Scientist</p>
+      <h1 class="hero-name">
+        <span>Anaya</span><br/>
+        <span class="italic">Gandhi</span><br/>
+        <span class="hero-dash pulse-once">&mdash;</span>
+      </h1>
+      <p class="hero-tagline">
+        Mechatronics → Data Science.<br>
+        I study how systems <strong>move, adapt, and respond under constraint,</strong> from protein conformational paths to Olympic biomechanics to ALS detection from speech.
+      </p>
+      <div class="hero-ctas">
+        <a href="#projects" class="btn-p" data-nav="projects">View Research</a>
+        <a href="#contact" class="btn-g" data-nav="contact">Get in Touch</a>
+      </div>
+      <div class="hero-socials">
+        <a href="https://github.com/gandhianaya" target="_blank" rel="noopener" class="hero-social" title="GitHub"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></a>
+        <a href="https://linkedin.com/in/anaya-gandhi-6593661b4" target="_blank" rel="noopener" class="hero-social" title="LinkedIn"><svg viewBox="0 0 16 16"><path d="M0 1.146C0 .513.526 0 1.175 0h13.65C15.474 0 16 .513 16 1.146v13.708c0 .633-.526 1.146-1.175 1.146H1.175C.526 16 0 15.487 0 14.854V1.146zm4.943 12.248V6.169H2.542v7.225h2.401zm-1.2-8.212c.837 0 1.358-.554 1.358-1.248-.015-.709-.52-1.248-1.342-1.248-.822 0-1.359.54-1.359 1.248 0 .694.521 1.248 1.327 1.248h.016zm4.908 8.212V9.359c0-.216.016-.432.08-.586.173-.431.568-.878 1.232-.878.869 0 1.216.662 1.216 1.634v3.865h2.401V9.25c0-2.22-1.184-3.252-2.764-3.252-1.274 0-1.845.7-2.165 1.193v.025h-.016l.016-.025V6.169h-2.4c.03.678 0 7.225 0 7.225h2.4z"/></svg></a>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-right-accent"></div>
+    <img
+      src="Portfolio.JPG"
+      alt="Anaya Gandhi"
+      class="hero-photo"
+    />
+    <div class="hero-right-overlay"></div>
+    <div class="hero-right-bottom">
+      <div class="hero-location-tag">Edinburgh · Mumbai</div>
+      <div class="hero-right-name">MSc Data Science, University of Edinburgh</div>
+    </div>
+  </div>
+  </div>
+  <div class="intro-about">
+  <div class="about-wrap">
+  <div>
+    <div class="section-eyebrow">About</div>
+    <h2 class="about-headline">Curiousity about<br/>how things work.<br/><em>Obssesed with why.</em></h2>
+  </div>
+  <div class="about-body">
+    <p>
+      My career has been a series of increasingly strange ways to answer the same question:
+      <strong>how do systems behave when they're pushed?</strong>
+      I started in mechatronics, building things that moved, failed, overheated, crashed,
+      and occasionally taught me humility. When something broke, there was nowhere to hide, the
+      system was either doing what it was supposed to do or it wasn't. That engineering mindset
+      followed me into data science, where I'm less interested in chasing the latest model and
+      more interested in understanding the system underneath. To me, data is rarely the destination.
+      It's the clue.
+    </p>
+  
+    <p>
+      Over the last few years, I've used machine learning and analytics to study protein dynamics,
+      detect neurological disorders from speech, analyze elite athlete biomechanics, optimize business
+      decisions, and generally ask far too many questions about why things behave the way they do.
+      On paper, those projects look completely unrelated. To me, they're all variations of the same
+      problem. <strong>Proteins fold. Athletes move. Patients speak. Markets shift.</strong>
+      Complex systems adapt under constraint, and I'm fascinated by understanding the mechanisms
+      behind that adaptation.
+    </p>
+  
+    <p>
+      My MSc in Data Science at the University of Edinburgh gave me the tools to explore those
+      questions through machine learning, statistics, and computational modelling. More importantly,
+      it taught me that a good model isn't just accurate&mdash;it helps you understand something you
+      couldn't see before. Today, I'm looking for opportunities across data science, AI, health
+      technology, computational biology, and human performance, especially where data can drive
+      decisions that matter in the real world.
+      <strong>If there's a system worth understanding, I'm probably interested.</strong>
+    </p>
+  
+    
+    <div class="looking-for">
+      <div class="looking-for-label">What I'm Looking For</div>
+      <p>I'm actively seeking roles in <strong>health AI, computational biology, and applied ML research,</strong> especially teams where outputs have real biological or physiological consequence. I'm open to industry and research positions, and don't require a PhD-level role to do PhD-level thinking. Mumbai-based, open to remote and relocation.</p>
+    </div>
+  </div>
+  </div>
+  </div>
+  </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section class="page page--scrollable" id="projects" data-page="projects">
+  <div class="page-main page-scroll">
+  <div class="projects-scroll">
+  <div class="projects-bleed">RESEARCH</div>
+  <div class="projects-inner page-enter">
+    <div class="projects-header">
+      <div>
+        <div class="section-eyebrow">Research & Projects</div>
+        <h2 class="projects-title">The<br/><em>work.</em></h2>
+      </div>
+      <p class="projects-sub">Each project has a live interactive demo &mdash; not just a description, something you can actually play with.</p>
+    </div>
+
+    <div class="proj-list">
+
+      <!-- PROJECT 1: PROTEIN VAE -->
+      <div class="proj-card" id="c1" onclick="goToPage('protein',1)" style="cursor:pointer">
+        <div class="proj-head">
+          <div class="proj-num">01</div>
+          <div class="proj-meta">
+            <div class="proj-tags"><span class="tag tag-gold">MSc Dissertation</span><span class="tag tag-navy">Computational Biology</span><span class="tag tag-navy">Generative AI</span></div>
+            <div class="proj-title-text">Physics-Informed VAEs for Protein Conformational Modeling</div>
+            <div class="proj-excerpt">University of Edinburgh · 2025 &mdash; Teaching a neural network to understand how proteins flex, constrained by physics.</div>
+          </div>
+          <div class="proj-toggle">Explore <div class="toggle-box" style="background:var(--navy);color:#fff;border-color:var(--navy)">→</div></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-inner">
+            <div class="proj-desc">
+              <h4>The Problem</h4>
+              <p>MurD ligase cycles between open and closed conformations to catalyze cell-wall synthesis. Traditional MD captures this, but takes weeks. Can a physics-informed generative model learn that conformational landscape directly from existing trajectory data?</p>
+              <h4>The Approach</h4>
+              <p>Physics-informed VAE on 2,700 MurD MD frames (open/closed/apo). Loss = MSE + β·KL + bond/angle penalties + Ramachandran torsion term. Three-stage search over 192 configs → balanced VAE (dz=64) resolving mode collapse.</p>
+              <h4>Results</h4>
+              <div class="results">
+                <div class="res">Reconstruction 1.25 Å RMSD; interpolation 0.87–1.31 Å; smoothness 0.048 ± 0.016 Å</div>
+                <div class="res">Apo validation RMSD 1.758 ± 0.017 Å; biological score 0.767</div>
+                <div class="res">CNN baseline: DOPE dropped 4,526.5 pts on test set, cannot interpolate</div>
+              </div>
+            </div>
+            <div class="proj-interactive">
+              <div class="demo-label"><div class="pulse"></div>Latent Space Explorer</div>
+              <canvas id="vae-c" height="180"></canvas>
+              <div class="slider-row"><label>Latent z₁</label><input type="range" id="vae-z1" min="-3" max="3" step="0.05" value="0"/><span class="slider-val" id="v-z1">0.00</span></div>
+              <div class="slider-row"><label>Latent z₂</label><input type="range" id="vae-z2" min="-3" max="3" step="0.05" value="0"/><span class="slider-val" id="v-z2">0.00</span></div>
+              <div class="slider-row"><label>Physics β</label><input type="range" id="vae-b" min="0" max="1" step="0.01" value="0.05"/><span class="slider-val" id="v-b">0.05</span></div>
+              <div style="font-size:.7rem;color:var(--soft);margin-top:.5rem">Drag the sliders to explore different regions of the learned conformational landscape. The dots show interpolated protein structures; RMSD updates live.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 2: ALS -->
+      <div class="proj-card" id="c2" onclick="goToPage('als',1)" style="cursor:pointer">
+        <div class="proj-head">
+          <div class="proj-num">02</div>
+          <div class="proj-meta">
+            <div class="proj-tags"><span class="tag tag-navy">Clinical AI</span><span class="tag tag-navy">Speech Processing</span><span class="tag tag-navy">Deep Learning</span></div>
+            <div class="proj-title-text">Automatic Speech Analysis for Dysarthria Recognition & ALS Diagnosis</div>
+            <div class="proj-excerpt">Group Research · 2025 &mdash; 97% F1-score detecting ALS from voice alone using Wav2Vec 2.0.</div>
+          </div>
+          <div class="proj-toggle">Explore <div class="toggle-box" style="background:var(--navy);color:#fff;border-color:var(--navy)">→</div></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-inner">
+            <div class="proj-desc">
+              <h4>The Problem</h4>
+              <p>ALS affects up to 80% of patients through dysarthria &mdash; impaired speech from motor neuron degeneration &mdash; and it often appears early. Could automated speech analysis catch it before other symptoms?</p>
+              <h4>The Approach</h4>
+              <p>Two parallel pipelines: Wav2Vec 2.0 fine-tuned on TORGO for dysarthria detection, and classical ML regression on VOC-ALS acoustic biomarkers (F₀, HNR, jitter, shimmer) for ALS severity grading.</p>
+              <h4>Results</h4>
+              <div class="results">
+                <div class="res">Fine-tuned Wav2Vec: F1 = 0.97, recall 0.99</div>
+                <div class="res">Random Forest best for severity: MAE ~6.8, R² = 0.125</div>
+                <div class="res">Datasets: TORGO (2,000 samples) + VOC-ALS (153 patients)</div>
+                <div class="res">Non-invasive &mdash; potential for remote monitoring</div>
+              </div>
+            </div>
+            <div class="proj-interactive">
+              <div class="demo-label"><div class="pulse"></div>Acoustic Feature Visualizer</div>
+              <div class="als-toggle-row">
+                <button class="als-btn active" onclick="setAls('healthy',this)">Healthy</button>
+                <button class="als-btn" onclick="setAls('mild',this)">Mild Dysarthria</button>
+                <button class="als-btn" onclick="setAls('severe',this)">Severe Dysarthria</button>
+              </div>
+              <canvas id="als-c-page" height="90" style="border:1px solid var(--border);background:#fff"></canvas>
+              <div class="als-metrics">
+                <div class="als-metric"><div class="als-metric-val" id="als-j-old">0.4%</div><div class="als-metric-label">Jitter</div></div>
+                <div class="als-metric"><div class="als-metric-val" id="als-s-old">2.1%</div><div class="als-metric-label">Shimmer</div></div>
+                <div class="als-metric"><div class="als-metric-val" id="als-h-old">22dB</div><div class="als-metric-label">HNR</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 5: SPOTIFY -->
+      <div class="proj-card" id="c5" onclick="goToPage('spotify',1)" style="cursor:pointer">
+        <div class="proj-head">
+          <div class="proj-num">03</div>
+          <div class="proj-meta">
+            <div class="proj-tags">
+              <span class="tag tag-navy">Clustering</span>
+              <span class="tag tag-navy">Predictive Modeling</span>
+              <span class="tag tag-navy">Music Analytics</span>
+            </div>
+            <div class="proj-title-text">
+              Seasonal & Life Cycle Patterns in Music Popularity
+            </div>
+            <div class="proj-excerpt">
+              Applied ML · 2024 &mdash; KMeans on Spotify Top 200 (2017–2023). Three song trajectory archetypes discovered.
+            </div>
+          </div>
+          <div class="proj-toggle">
+            Explore
+            <div class="toggle-box" style="background:var(--navy);color:#fff;border-color:var(--navy)">→</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 4: NETWORK -->
+      <div class="proj-card" id="c4" onclick="goToPage('network',1)" style="cursor:pointer">
+        <div class="proj-head">
+          <div class="proj-num">04</div>
+          <div class="proj-meta">
+            <div class="proj-tags"><span class="tag tag-navy">Network Analysis</span><span class="tag tag-navy">Graph Theory</span><span class="tag tag-navy">Finance</span></div>
+            <div class="proj-title-text">Shared Investor Networks: Linking Microsoft to the Market</div>
+            <div class="proj-excerpt">Network Science · 2024 &mdash; 77 investors, 1,529 stocks, one bipartite graph. How shared ownership connects MSFT to everything.</div>
+          </div>
+          <div class="proj-toggle">Explore <div class="toggle-box" style="background:var(--navy);color:#fff;border-color:var(--navy)">→</div></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-inner">
+            <div class="proj-desc">
+              <h4>The Problem</h4>
+              <p>Stock correlations are often driven by shared investor behaviour. If the same institutional investors hold both MSFT and another stock, market movements propagate through those ownership networks &mdash; invisible in price data alone.</p>
+              <h4>The Approach</h4>
+              <p>Bipartite graph (1,606 nodes: 77 investors + 1,529 stocks) from 2016–2023 quarterly 13F filings. Co-investment projection, betweenness centrality, Louvain community detection, and minimum spanning tree on return correlations.</p>
+              <h4>Results</h4>
+              <div class="results">
+                <div class="res">MSFT betweenness: 0.159 → 0 (pandemic) → 0.577 (recovery)</div>
+                <div class="res">Community expanded to 168 stocks at peak crisis &mdash; "safe harbour" effect</div>
+                <div class="res">Tightest co-investments: AMZ (158), GOOG (142), META (135)</div>
+                <div class="res">Top investors by degree: David Katz / Dodge & Cox (30 investments each)</div>
+              </div>
+            </div>
+            <div class="proj-interactive">
+              <div class="demo-label"><div class="pulse"></div>Investor Network Explorer</div>
+              <div class="nf-row">
+                <button class="nf-btn active" onclick="filterNet('all',this)">All</button>
+                <button class="nf-btn" onclick="filterNet('value',this)">Value</button>
+                <button class="nf-btn" onclick="filterNet('growth',this)">Growth</button>
+                <button class="nf-btn" onclick="filterNet('activist',this)">Activist</button>
+                <button class="nf-btn" onclick="filterNet('hedge',this)">Hedge</button>
+              </div>
+              <canvas id="net-c" height="180" style="border:1px solid var(--border);background:#fff"></canvas>
+              <div class="net-tip" id="net-tip">Hover a node to see investor details</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 3: TRADING-->
+      <div class="proj-card" id="c3" onclick="goToPage('trading',1)" style="cursor:pointer">
+        <div class="proj-head">
+          <div class="proj-num">05</div>
+          <div class="proj-meta">
+            <div class="proj-tags"><span class="tag tag-navy">Agent-Based Modeling</span><span class="tag tag-navy">Financial Markets</span><span class="tag tag-navy">Simulation</span></div>
+            <div class="proj-title-text">Trading Strategy Interactions: An Agent-Based Model of Market Dynamics</div>
+            <div class="proj-excerpt">Probabilistic Programming · 2024 &mdash; Bitcoin market simulation with 5 trader types. Emergent market behaviour from agent interactions.</div>
+          </div>
+          <div class="proj-toggle">Explore <div class="toggle-box" style="background:var(--navy);color:#fff;border-color:var(--navy)">→</div></div>
+        </div>
+        <div class="proj-body">
+          <div class="proj-inner">
+            <div class="proj-desc">
+              <h4>The Problem</h4>
+              <p>Market dynamics emerge from agent interactions. Rather than modelling markets top-down, ABM lets complexity arise from the bottom up &mdash; making emergent phenomena like volatility cascades visible.</p>
+              <h4>The Approach</h4>
+              <p>Bitcoin/GBP, 1,750-day simulation. 100 agents (5,000 GBP + 0.5 BTC each): 70% Chartists (Momentum, RSI, Balanced, Alternating) + 30% Random. Petrov's Price Response Function + Gibrat's Law. Novel Contrarian Trader introduced in Task 4.</p>
+              <h4>Results</h4>
+              <div class="results">
+                <div class="res">Random Traders: highest wealth (£231,016) &mdash; counterintuitive Bitcoin-heavy windfall</div>
+                <div class="res">Balanced chartists: best win rate (52.47%), lowest drawdown (£23,949)</div>
+                <div class="res">Contrarians stabilised market: price capped ~7k vs ~11k GBP without them</div>
+                <div class="res">Alternating agents worst: lowest wealth (£113,277), only 37% exposure time</div>
+              </div>
+            </div>
+            <div class="proj-interactive">
+              <div class="demo-label"><div class="pulse"></div>Live Market Simulation</div>
+              <div class="trading-controls">
+                <div class="t-ctrl"><label>Momentum Traders</label><input type="range" id="t-m" min="0" max="40" value="25"/></div>
+                <div class="t-ctrl"><label>RSI Traders</label><input type="range" id="t-r" min="0" max="40" value="20"/></div>
+                <div class="t-ctrl"><label>Contrarians</label><input type="range" id="t-c" min="0" max="40" value="15"/></div>
+                <div class="t-ctrl"><label>Random Traders</label><input type="range" id="t-rn" min="0" max="40" value="40"/></div>
+              </div>
+              <canvas id="trade-c" height="120" style="border:1px solid var(--border);background:#fff"></canvas>
+              <div class="trade-btns">
+                <button class="trading-btn" onclick="runSim()" style="flex:1">▶ Run Simulation</button>
+                <button class="trading-btn ghost" onclick="resetSim()" style="flex:0 0 auto;width:auto">Reset</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  </div>
+  </div>
+</section>
+
+       
+
+<!-- PROTEIN PROJECT PAGE -->
+<section class="page page--scrollable" id="protein" data-page="protein">
+  <div class="page-main page-scroll">
+    <div class="spotify-wrap">
+      <div class="spotify-inner page-enter">
+
+        <div class="sp-back" onclick="goToPage('projects',-1)">
+          <span class="sp-back-arrow">←</span> Back to Research
+        </div>
+
+        <div class="sp-header">
+          <div class="sp-tags">
+            <span class="tag tag-gold">MSc Dissertation</span>
+            <span class="tag tag-navy">Computational Biology</span>
+            <span class="tag tag-navy">Generative AI</span>
+          </div>
+          <div class="sp-eyebrow">University of Edinburgh · MSc Data Science · 2025</div>
+          <h2 class="sp-title">Physics-Informed VAEs for<br/><em>Protein Conformational Modeling</em></h2>
+          <a href="https://github.com/gandhianaya/protein-conformations-vae" target="_blank" rel="noopener" class="sp-gh"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
+        </div>
+
+        <!-- Two-column grid matching Spotify layout -->
+        <div class="sp-grid">
+
+          <!-- LEFT: narrative -->
+          <div class="sp-desc">
+            <div class="sp-section">
+              <h4 class="sp-h4">The Problem</h4>
+              <p>Because proteins are inherently dynamic, mapping their conformational transitions is essential for modern drug discovery. However, traditional molecular dynamics simulations are computationally exhaustive, often requiring weeks to generate a single trajectory. This opens a critical question: can generative models bypass these physical simulation bottlenecks by learning the conformational landscape directly from historical trajectory data?</p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">The Approach</h4>
+              <p>
+                This project implements a physics-informed VAE trained on <strong>MurD ligase</strong> molecular dynamics trajectories, consisting of 2,700 total frames evenly distributed at 900 frames per functional state (open, closed, and apo). The network utilizes an MLP encoder paired with a FoldingNet-style decoder, optimized via a total loss function defined as <em>L</em><sub>total</sub> = <em>L</em><sub>MSE</sub> + &beta;<em>L</em><sub>KL</sub> + <em>w</em><sub>geo</sub><em>L</em><sub>geo</sub> + <em>w</em><sub>rama</sub><em>L</em><sub>rama</sub>. This formulation directly accounts for reconstruction error, KL regularization, AMBER-style bond/angle penalties, and Ramachandran torsion constraints to preserve the physical realism of backbone dihedrals.
+              </p>
+              
+              <p>
+                The optimal architecture was determined through a three-stage search evaluating 192 hyperparameter configurations. Test 15 established the baseline structural parameters (<em>d<sub>z</sub></em>=8, &beta;=0.05, <em>w</em><sub>geo</sub>=5&times;10<sup>&minus;5</sup>), while Config 82 identified the superior physics constraint set (bond+smoothness) with a realism score of 0.4965. Because this initial configuration exhibited mode collapse during structural interpolation, a final <strong>balanced VAE</strong> (<em>d<sub>z</sub></em>=64) was
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">Results</h4>
+              <div class="results">
+                <div class="res">Reconstruction RMSD: 1.25 Å &mdash; structures faithfully recover input conformations</div>
+                <div class="res">Interpolation RMSD: 0.87–1.31 Å to endpoints; consecutive-step smoothness 0.048 ± 0.016 Å</div>
+                <div class="res">Apo-state validation RMSD: 1.758 ± 0.017 Å &mdash; close alignment with experimentally confirmed reference structure</div>
+                <div class="res">Secondary structure: 22.1% helix, 29.0% β-sheet, 49.0% coil &mdash; biologically plausible throughout the pathway</div>
+                <div class="res">Biological evaluation score: 0.767 overall; CNN baseline dropped 4,526.5 DOPE score points on test set and could not interpolate at all</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: both interactives stacked -->
+          <div class="sp-right sp-right-stack">
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Latent Space Explorer</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:1rem;line-height:1.5">Drag the sliders to explore different regions of the learned conformational landscape. The dots show interpolated protein structures; RMSD updates live.</p>
+              <canvas id="vae-c-page" height="230" style="width:100%;border:1px solid var(--border);background:#fff;display:block;"></canvas>
+              <div class="slider-row"><label>Latent z₁</label><input type="range" id="vae-z1-page" min="-3" max="3" step="0.05" value="0" oninput="vaePageDraw()"/><span class="slider-val" id="v-z1-page">0.00</span></div>
+              <div class="slider-row"><label>Latent z₂</label><input type="range" id="vae-z2-page" min="-3" max="3" step="0.05" value="0" oninput="vaePageDraw()"/><span class="slider-val" id="v-z2-page">0.00</span></div>
+              <div class="slider-row"><label>Physics β</label><input type="range" id="vae-b-page" min="0" max="1" step="0.01" value="0.05" oninput="vaePageDraw()"/><span class="slider-val" id="v-b-page">0.05</span></div>
+              <div style="font-size:.65rem;color:var(--soft);margin-top:.4rem;line-height:1.5">z₁/z₂ navigate the 2D latent space &mdash; dots are interpolated conformations between open and closed states. Higher β increases physics penalty, pulling structures toward realistic geometries.</div>
+            </div>
+            <!-- The Three-Model Journey -->
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>The Three-Model Journey</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:.75rem;line-height:1.5">Three VAE iterations to solve mode collapse and over-diversity. Click to see what broke &mdash; and what fixed it.</p>
+              <div id="vae-stage-btns" style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+                <button class="als-btn active" onclick="setVaeStage(0,this)">① Original</button>
+                <button class="als-btn" onclick="setVaeStage(1,this)">② Improved</button>
+                <button class="als-btn" onclick="setVaeStage(2,this)">③ Balanced ✓</button>
+              </div>
+              <canvas id="vae-iter-c" height="190" style="width:100%;border:1px solid var(--border);background:var(--off);display:block;border-radius:8px;margin-bottom:.6rem"></canvas>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem;margin-bottom:.6rem">
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="vae-iter-recon" style="font-size:.9rem;font-weight:700;color:var(--navy)">0.0001 Å</div>
+                  <div style="font-size:.6rem;color:var(--soft)">Recon RMSD</div>
+                </div>
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="vae-iter-interp" style="font-size:.9rem;font-weight:700;color:#dc2626">~0.0001 Å</div>
+                  <div style="font-size:.6rem;color:var(--soft)">Interp RMSD</div>
+                </div>
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="vae-iter-ldist" style="font-size:.9rem;font-weight:700;color:var(--navy)">0.013</div>
+                  <div style="font-size:.6rem;color:var(--soft)">Latent dist.</div>
+                </div>
+              </div>
+              <div id="vae-iter-desc" style="font-size:.7rem;color:var(--mid);background:white;border:1px solid var(--border);border-radius:6px;padding:.5rem .7rem;line-height:1.6;border-left:3px solid #dc2626">
+                <strong>Mode collapse.</strong> All interpolated frames nearly identical. Latent distance only 0.013.
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="sp-paper-section">
+          <div class="sp-paper-header">
+            <div class="sp-h4" style="margin:0">Read the Dissertation</div>
+            <div style="font-size:.75rem;color:var(--soft)">MSc Dissertation · University of Edinburgh · 2025</div>
+          </div>
+          <div class="sp-paper-embed">
+            <iframe src="protein.pdf" width="100%" height="850" style="border:none;border-radius:20px;background:white;"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ALS PROJECT PAGE -->
+<section class="page page--scrollable" id="als" data-page="als">
+  <div class="page-main page-scroll">
+    <div class="spotify-wrap">
+      <div class="spotify-inner page-enter">
+
+        <div class="sp-back" onclick="goToPage('projects',-1)">
+          <span class="sp-back-arrow">←</span> Back to Research
+        </div>
+
+        <div class="sp-header">
+          <div class="sp-tags">
+            <span class="tag tag-navy">Clinical AI</span>
+            <span class="tag tag-navy">Speech Processing</span>
+            <span class="tag tag-navy">Deep Learning</span>
+          </div>
+          <div class="sp-eyebrow">Group Research · University of Edinburgh · 2025</div>
+          <h2 class="sp-title">Automatic Speech Analysis for<br/><em>Dysarthria Recognition & ALS Diagnosis</em></h2>
+          <a href="https://github.com/gandhianaya/als-speech-analysis" target="_blank" rel="noopener" class="sp-gh"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
+        </div>
+
+        <!-- Two-column grid matching Spotify layout -->
+        <div class="sp-grid">
+
+          <!-- LEFT: narrative -->
+          <div class="sp-desc">
+            <div class="sp-section">
+              <h4 class="sp-h4">The Problem</h4>
+              <p>For up to 80% of ALS patients, one of the earliest and most challenging symptoms to emerge is dysarthria the impairment of speech caused by the degeneration of motor neurons. Because this speech decline often appears long before other major physical symptoms, it presents a unique opportunity for early detection. Could automated speech analysis step in to catch these subtle vocal shifts before noticeable symptoms take hold? Transitioning from manual clinical evaluations to automated, data-driven speech tracking could completely change how early we catch the disease.</p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">The Approach</h4>
+              <p>Two parallel pipelines: <strong>Wav2Vec 2.0</strong> fine-tuned on <strong>TORGO</strong> &mdash; a 2,000-sample database of dysarthric and healthy speech, evenly split by gender &mdash; for deep feature extraction and binary dysarthria classification. In parallel, a shallow neural net trained on 13 MFCCs served as a comparator classifier on the same dataset.</p>
+              <p>The second pipeline targets <strong>ALS severity prediction</strong> using the <strong>VOC-ALS</strong> dataset (153 Italian-speaking individuals: 102 ALS patients, 51 healthy controls). Five acoustic biomarkers &mdash; mean F₀, F₀ standard deviation, HNR, jitter, and shimmer &mdash; were extracted across 8 prescribed vocal tasks (40 features total) and fed into regression models: Linear, Ridge, Lasso, XGBoost, and Random Forest. Severity was quantified via an inverted ALSFRS-R clinical scale, enabling disease progression tracking.</p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">Results</h4>
+              <div class="results">
+                <div class="res">Fine-tuned Wav2Vec: F1 = 0.97, precision 0.94, recall 0.99 &mdash; only 7 misclassifications in 200 test samples</div>
+                <div class="res">Outperformed frozen Wav2Vec (F1 = 0.81) and MFCCs-based NN (F1 = 0.95) &mdash; fine-tuning is essential for clinical audio</div>
+                <div class="res">Random Forest best for severity regression: test MAE ~6.8, R² = 0.125 via cross-validation</div>
+                <div class="res">Feature importance: F₀ std dev and HNR on /i/ phonation were top predictors of ALS progression</div>
+                <div class="res">Non-invasive pipeline &mdash; works on short, unstructured recordings; potential for remote and home-based monitoring</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: both interactives stacked -->
+          <div class="sp-right sp-right-stack">
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Acoustic Biomarker Simulator</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:1rem;line-height:1.5">Toggle between healthy and dysarthric speech profiles to visualize changes in key acoustic biomarkers associated with ALS progression.</p>
+              <div class="als-toggle-row">
+                <button class="als-btn active" onclick="setAls('healthy',this)">Healthy</button>
+                <button class="als-btn" onclick="setAls('mild',this)">Mild Dysarthria</button>
+                <button class="als-btn" onclick="setAls('severe',this)">Severe Dysarthria</button>
+              </div>
+              <canvas id="als-c" height="120" style="width:100%;border:1px solid var(--border);background:white;display:block;"></canvas>
+              <div style="font-size:.65rem;color:var(--soft);margin-top:.35rem;margin-bottom:.3rem;line-height:1.5">Synthesised vocal signal &mdash; healthy speech is periodic and stable; dysarthric speech shows pitch breaks, amplitude fluctuation, and noise.</div>
+              <div class="als-metrics">
+                <div class="als-metric"><div class="als-metric-val" id="als-j">0.4%</div><div class="als-metric-label">Jitter</div></div>
+                <div class="als-metric"><div class="als-metric-val" id="als-s">2.1%</div><div class="als-metric-label">Shimmer</div></div>
+                <div class="als-metric"><div class="als-metric-val" id="als-h">22dB</div><div class="als-metric-label">HNR</div></div>
+              </div>
+            </div>
+            <!-- Confusion Matrix Comparison -->
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Model Comparison: Test Set</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:.75rem;line-height:1.5">Confusion matrices for all three detectors on 200 test samples (Table 4). Click a model to inspect it.</p>
+              <div id="als-cm-btns" style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+                <button class="als-btn active" onclick="setAlsCM('ft',this)">Fine-tuned Wav2Vec</button>
+                <button class="als-btn" onclick="setAlsCM('frz',this)">Frozen Wav2Vec</button>
+                <button class="als-btn" onclick="setAlsCM('mfc',this)">MFCCs-NN</button>
+              </div>
+              <canvas id="als-cm-c" height="190" style="width:100%;border:1px solid var(--border);background:white;display:block;border-radius:6px;margin-bottom:.6rem"></canvas>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.4rem">
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="als-cm-f1" style="font-size:.95rem;font-weight:700;color:#16a34a">0.97</div>
+                  <div style="font-size:.6rem;color:var(--soft)">F1-score</div>
+                </div>
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="als-cm-prec" style="font-size:.95rem;font-weight:700;color:var(--navy)">0.94</div>
+                  <div style="font-size:.6rem;color:var(--soft)">Precision</div>
+                </div>
+                <div style="background:white;border:1px solid var(--border);border-radius:6px;padding:.4rem .5rem;text-align:center">
+                  <div id="als-cm-rec" style="font-size:.95rem;font-weight:700;color:var(--navy)">0.99</div>
+                  <div style="font-size:.6rem;color:var(--soft)">Recall</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="sp-paper-section">
+          <div class="sp-paper-header">
+            <div class="sp-h4" style="margin:0">Read the Paper</div>
+            <div style="font-size:.75rem;color:var(--soft)">Healthcare AI · University of Edinburgh · 2025</div>
+          </div>
+          <div class="sp-paper-embed">
+            <iframe src="als.pdf" width="100%" height="850" style="border:none;border-radius:20px;background:white;"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPOTIFY PROJECT PAGE -->
+<section class="page page--scrollable" id="spotify" data-page="spotify">
+  <div class="page-main page-scroll">
+  <div class="spotify-wrap">
+  <div class="spotify-inner page-enter">
+
+    <!-- Back nav -->
+    <div class="sp-back" onclick="goToPage('projects',-1)">
+      <span class="sp-back-arrow">←</span> Back to Research
+    </div>
+
+    <!-- Header -->
+    <div class="sp-header">
+      <div class="sp-tags"><span class="tag tag-navy">Clustering</span><span class="tag tag-navy">Predictive Modeling</span><span class="tag tag-navy">Music Analytics</span></div>
+      <div class="sp-eyebrow">Applied Machine Learning · University of Edinburgh · 2024</div>
+      <h2 class="sp-title">Seasonal & Life Cycle Patterns<br/><em>in Music Popularity</em></h2>
+      <a href="https://github.com/gandhianaya/spotify-analysis" target="_blank" rel="noopener" class="sp-gh"><svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>View on GitHub</a>
+    </div>
+
+    <!-- Two column: description + interactive -->
+    <div class="sp-grid">
+
+      <!-- LEFT: full write-up -->
+      <div class="sp-desc">
+        <div class="sp-section">
+          <h4 class="sp-h4">The Problem</h4>
+          <p>Why do certain tracks peak immediately and fade into obscurity, while others build a slow, sustainable burn? This project investigates whether a song's full popularity trajectory. From its initial release to its peak and eventual decline, can be predicted using a combination of intrinsic audio features and strategic release timing.</p>
+        </div>
+        <div class="sp-section">
+          <h4 class="sp-h4">The Approach</h4>
+          <p>
+            Using the Spotify Top 200 dataset (2017&ndash;2023) supplemented with Spotify Developer API metadata, I engineered three core lifecycle features: time to peak, duration at peak, and rate of decline. The feature set integrated temporal markers (release month and day of week) with core audio dimensions, including energy, danceability, valence, speechiness, acousticness, and loudness.
+          </p>
+          
+          <p>
+            Unsupervised benchmarking across four clustering algorithms (KMeans, DBSCAN, Agglomerative, and Gaussian Mixture) evaluated via Silhouette, Davies-Bouldin, and Calinski-Harabasz metrics identified <strong>KMeans</strong> as the optimal model (Silhouette score of 0.214 vs. DBSCAN's &minus;0.283). The elbow method established 3 distinct clusters as the ideal structural fit. Predictive modeling using Random Forest, XGBoost, and SVR demonstrated that incorporating release-month temporal features drastically outperformed models utilizing audio features alone when forecasting a track's time-to-peak.
+          </p>
+        </div>
+        <div class="sp-section">
+          <h4 class="sp-h4">Results</h4>
+          <div class="results">
+            <div class="res">Cluster 0 &mdash; Mainstream: energy 0.70, danceability 0.70, acousticness 0.15. Fast peaks, 14% reach Top 20</div>
+            <div class="res">Cluster 1 &mdash; Acoustic: energy 0.45, acousticness 0.53. Gradual rise, longer peak durations. Winter- and fall-favouring</div>
+            <div class="res">Cluster 2 &mdash; High-Impact: energy 0.65, loudness 0.90. 69% reach Top 20 which was the standout chart predictor</div>
+            <div class="res">Summer releases peak fastest (mean 30.9 days); winter releases slowest (54.2 days) but sustain longer</div>
+            <div class="res">SVR achieved lowest MAE (49.98) vs baseline 72.31; negative R² across models reflects chart timing's inherent unpredictability beyond audio features alone</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: both interactives stacked -->
+      <div class="sp-right sp-right-stack">
+        <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+          <div class="demo-label"><div class="pulse"></div>Song Cluster Predictor</div>
+          <p style="font-size:.75rem;color:var(--soft);margin-bottom:1rem;line-height:1.5">Drag the sliders to set a song's audio profile. Watch the radar chart update and see which of the three discovered archetypes it most resembles.</p>
+          <canvas id="sp-radar" style="display:block;margin:0 auto 1rem;width:220px;height:180px"></canvas>
+          <div class="sp-cluster-match" id="sp-match">
+            <div class="sp-match-bar" id="sp-match-bar" style="background:var(--navy)"></div>
+            <div class="sp-match-label">
+              <span class="cluster-dot" id="sp-dot" style="background:var(--navy)"></span>
+              <span id="sp-cl-name">Cluster 0 &mdash; Mainstream</span>
+            </div>
+            <div class="sp-match-pct" id="sp-match-pct">14% reach Top 20</div>
+          </div>
+          <div id="sp-cl-desc" style="font-size:.75rem;color:var(--mid);margin-top:.6rem;line-height:1.5;text-align:center"></div>
+          <div style="font-size:.65rem;color:var(--soft);margin-top:.4rem;line-height:1.5;text-align:center">The coloured shape is your song's audio profile. Ghost outlines show the three cluster centroids &mdash; whichever your shape overlaps most determines the predicted archetype.</div>
+          <div style="margin-top:1rem">
+            <div class="slider-row"><label>Energy</label><input type="range" id="sp-e" min="0" max="1" step="0.01" value="0.70" oninput="spUpdate()"/><span class="slider-val" id="sp-ev">0.70</span></div>
+            <div class="slider-row"><label>Danceability</label><input type="range" id="sp-d" min="0" max="1" step="0.01" value="0.70" oninput="spUpdate()"/><span class="slider-val" id="sp-dv">0.70</span></div>
+            <div class="slider-row"><label>Acousticness</label><input type="range" id="sp-a" min="0" max="1" step="0.01" value="0.15" oninput="spUpdate()"/><span class="slider-val" id="sp-av">0.15</span></div>
+            <div class="slider-row"><label>Loudness</label><input type="range" id="sp-l" min="0" max="1" step="0.01" value="0.82" oninput="spUpdate()"/><span class="slider-val" id="sp-lv">0.82</span></div>
+            <div style="font-size:.65rem;color:var(--soft);margin-top:.5rem">Loudness normalised 0–1 for display (paper reports 0.82 / &mdash; / 0.90)</div>
+          </div>
+        </div>
+        <!-- Song Lifecycle Trajectories -->
+        <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+          <div class="demo-label"><div class="pulse"></div>Song Lifecycle Trajectories</div>
+          <p style="font-size:.75rem;color:var(--soft);margin-bottom:.75rem;line-height:1.5">The three discovered archetypes &mdash; how each cluster's popularity actually moves over a song's chart life. Click a cluster to highlight it.</p>
+          <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-bottom:.75rem" id="sp-traj-btns">
+            <button class="als-btn active" onclick="spTrajFocus('all',this)">All</button>
+            <button class="als-btn" onclick="spTrajFocus('mainstream',this)">C0 Mainstream</button>
+            <button class="als-btn" onclick="spTrajFocus('acoustic',this)">C1 Acoustic</button>
+            <button class="als-btn" onclick="spTrajFocus('impact',this)">C2 High-Impact</button>
+          </div>
+          <canvas id="sp-traj-c" height="140" style="width:100%;display:block;margin-bottom:.6rem;border:1px solid var(--border);background:#fff"></canvas>
+          <div id="sp-traj-tip" style="font-size:.73rem;color:var(--mid);background:white;border:1px solid var(--border);border-radius:6px;padding:.5rem .7rem;line-height:1.6">
+            <strong>All three clusters</strong> &mdash; Mainstream spikes fast and fades. Acoustic builds slowly and sustains. High-Impact peaks hard and holds the top longer.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-paper-section">
+      <div class="sp-paper-header">
+        <div class="sp-h4" style="margin:0">Read the Paper</div>
+        <div style="font-size:.75rem;color:var(--soft)">
+          Submitted · University of Edinburgh · Applied Machine Learning · 2024
+        </div>
+      </div>
+    
+      <div class="sp-paper-embed">
+        <iframe
+          src="music-popularity-paper.pdf"
+          width="100%"
+          height="850"
+          style="
+            border:none;
+            border-radius:20px;
+            background:white;
+          ">
+        </iframe>
+      </div>
+    </div>
+
+  </div>
+  </div>
+  </div>
+</section>
+
+<!-- NETWORK PROJECT PAGE -->
+<section class="page page--scrollable" id="network" data-page="network">
+  <div class="page-main page-scroll">
+    <div class="spotify-wrap">
+      <div class="spotify-inner page-enter">
+
+        <div class="sp-back" onclick="goToPage('projects',-1)">
+          <span class="sp-back-arrow">←</span> Back to Research
+        </div>
+
+        <div class="sp-header">
+          <div class="sp-tags">
+            <span class="tag tag-navy">Network Analysis</span>
+            <span class="tag tag-navy">Graph Theory</span>
+            <span class="tag tag-navy">Finance</span>
+          </div>
+          <div class="sp-eyebrow">Network Science · University of Edinburgh · 2024</div>
+          <h2 class="sp-title">Shared Investor Networks:<br/><em>Linking Microsoft to the Market</em></h2>
+        </div>
+
+        <!-- Two-column grid matching Spotify layout -->
+        <div class="sp-grid">
+
+          <!-- LEFT: narrative -->
+          <div class="sp-desc">
+            <div class="sp-section">
+              <h4 class="sp-h4">The Problem</h4>
+              <p>Traditional financial analysis often overlooks the fact that stock correlations are heavily driven by shared investor behavior rather than fundamental market indicators alone. When the same institutional investors simultaneously hold large positions in Microsoft (MSFT) and another equity, broader market movements inevitably propagate through these underlying ownership networks. This structural interconnectedness remains completely invisible when examining price data in isolation, creating a critical blind spot for risk assessment.
+              </p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">The Approach</h4>
+              <p>To uncover these hidden dynamics, this project constructed a bipartite graph utilizing quarterly 13F holdings filings spanning from 2016 to 2023. The resulting network comprised 1,606 total nodes&mdash;consisting of 77 distinct institutional investors and 1,529 individual stocks&mdash;with edge weights mathematically encoding the exact number of quarters a given investor maintained a position in a stock. To isolate the relationships between assets, this bipartite network was then projected onto the stock side, creating a unipartite co-investment network where an explicit link is established between two stocks if they share at least one mutual institutional investor</p>
+              <p>Three analytical threads were executed in parallel to evaluate this network structure. First, betweenness centrality was calculated to track which specific stocks acted as critical systemic bridges across the market. Second, Louvain community detection was applied across 29 unique quarterly snapshots to monitor how clusters of co-invested stocks evolved over time. Finally, a minimum spanning tree was constructed based on historical return correlations, using the distance formula <em>d</em> = 1 &minus; |<em>correlation</em>|, to reveal the market's true structural backbone before, during, and immediately following the COVID-19 pandemic.</p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">Results</h4>
+              <div class="results">
+                <div class="res">MSFT's betweenness centrality collapsed to 0 during the pandemic &mdash; investors fled to diversification, severing its bridging role</div>
+                <div class="res">Post-pandemic rebound: betweenness jumped to 0.577, making MSFT the market's dominant connector again</div>
+                <div class="res">MSFT's community expanded from ~102 stocks pre-pandemic to 168 at peak crisis &mdash; a "safe harbour" effect</div>
+                <div class="res">Highest-degree investors: David Katz / Matrix Asset Advisors and Dodge & Cox (30 investments each); value investing dominates MSFT's base</div>
+                <div class="res">MSFT most co-invested with AMZ (158 shared investors), GOOG (142), META (135) &mdash; tightly bound to tech sector</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: both interactives stacked -->
+          <div class="sp-right sp-right-stack">
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>MSFT's Pandemic Centrality Journey</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:.75rem;line-height:1.5">Betweenness centrality measures how often MSFT acts as a <em>bridge</em> between stocks. Watch it collapse during COVID &mdash; then come back stronger than ever.</p>
+              <div id="net-timeline-btns" style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+                <button class="als-btn active" onclick="setNetEra('before',this)">Pre-Pandemic</button>
+                <button class="als-btn" onclick="setNetEra('during',this)">COVID Crisis</button>
+                <button class="als-btn" onclick="setNetEra('after',this)">Recovery</button>
+              </div>
+              <canvas id="net-c-page" height="130" style="width:100%;border:1px solid var(--border);background:#fff;display:block;border-radius:4px;"></canvas>
+              <div style="font-size:.65rem;color:var(--soft);margin-top:.35rem;line-height:1.5">Network graph showing MSFT (centre) and its co-invested stocks. Node size reflects investor degree; edges show shared ownership links in each era.</div>
+              <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-top:.75rem">
+                <div style="text-align:center;background:white;border:1px solid var(--border);border-radius:6px;padding:.5rem">
+                  <div id="net-deg" style="font-size:1.1rem;font-weight:700;color:var(--navy)">0.063</div>
+                  <div style="font-size:.65rem;color:var(--soft)">Degree Centrality</div>
+                </div>
+                <div style="text-align:center;background:white;border:1px solid var(--border);border-radius:6px;padding:.5rem">
+                  <div id="net-btw" style="font-size:1.1rem;font-weight:700;color:var(--terracotta)">0.159</div>
+                  <div style="font-size:.65rem;color:var(--soft)">Betweenness</div>
+                </div>
+                <div style="text-align:center;background:white;border:1px solid var(--border);border-radius:6px;padding:.5rem">
+                  <div id="net-com" style="font-size:1.1rem;font-weight:700;color:var(--navy)">~102</div>
+                  <div style="font-size:.65rem;color:var(--soft)">Community Size</div>
+                </div>
+              </div>
+              <div id="net-era-desc" style="font-size:.72rem;color:var(--mid);margin-top:.75rem;line-height:1.55;background:white;border-radius:6px;padding:.6rem .75rem;border:1px solid var(--border)">
+                Reliable bridge stock. MSFT connected Amazon, Adobe, and CNI &mdash; trusted by a focused group of long-term value investors.
+              </div>
+            </div>
+            <!-- Co-Investment Ranking -->
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Co-Investment Ranking</div>
+              <div style="font-size:.75rem;color:var(--soft);margin-bottom:.9rem;line-height:1.5">How many of MSFT's 77 institutional investors also hold each stock. Bar thickness scales with count &mdash; hover any row for details.</div>
+              <div id="coinvest-chart" style="width:100%"></div>
+              <div style="display:flex;gap:1.2rem;margin-top:.8rem;flex-wrap:wrap;align-items:center">
+                <div style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--soft)"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#2563eb"></span>Tech</div>
+                <div style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--soft)"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#dc2626"></span>Finance</div>
+                <div style="display:flex;align-items:center;gap:.35rem;font-size:.68rem;color:var(--soft)"><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:#16a34a"></span>Other</div>
+              </div>
+            </div>
+
+        </div>
+        </div>
+
+        <div class="sp-paper-section">
+          <div class="sp-paper-header">
+            <div class="sp-h4" style="margin:0">Read the Paper</div>
+            <div style="font-size:.75rem;color:var(--soft)">Network Science · University of Edinburgh · 2024</div>
+          </div>
+          <div class="sp-paper-embed">
+            <iframe src="network.pdf" width="100%" height="850" style="border:none;border-radius:20px;background:white;"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRADING PROJECT PAGE -->
+<section class="page page--scrollable" id="trading" data-page="trading">
+  <div class="page-main page-scroll">
+    <div class="spotify-wrap">
+      <div class="spotify-inner page-enter">
+
+        <div class="sp-back" onclick="goToPage('projects',-1)">
+          <span class="sp-back-arrow">←</span> Back to Research
+        </div>
+
+        <div class="sp-header">
+          <div class="sp-tags">
+            <span class="tag tag-navy">Agent-Based Modeling</span>
+            <span class="tag tag-navy">Financial Markets</span>
+            <span class="tag tag-navy">Simulation</span>
+          </div>
+          <div class="sp-eyebrow">Probabilistic Programming · University of Edinburgh · 2024</div>
+          <h2 class="sp-title">Trading Strategy Interactions:<br/><em>An Agent-Based Model of Market Dynamics</em></h2>
+        </div>
+
+        <!-- Two-column grid matching Spotify layout -->
+        <div class="sp-grid">
+
+          <!-- LEFT: narrative -->
+          <div class="sp-desc">
+            <div class="sp-section">
+              <h4 class="sp-h4">The Problem</h4>
+              <p>Market dynamics really come down to what happens when different trading strategies collide. When you have trend-followers, mean-reversion traders, and noise traders all competing in the exact same space, it begs the question: who actually comes out on top, and what does that competition do to the market itself? Instead of using rigid, top-down economic equations, agent-based modeling lets these complex behaviors emerge naturally from the bottom up. This makes it much easier to actually see and map out exactly how things like sudden volatility cascades and wealth concentration happen.
+              </p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">The Approach</h4>
+              <p>To test this out, I set up a simulation of a Bitcoin/GBP market running over 1,750 days. I started with a baseline population of 100 agents, giving every single one of them a starting balance of 5,000 GBP and 0.5 BTC to keep the playing field level. For the initial population mix, I went with 70% Chartists&mdash;which included a mix of Momentum-Dominant, RSI-Dominant, Balanced, and Alternating subtypes&mdash;and 30% Random Traders. After establishing that baseline, I threw a brand-new Contrarian Trader class into the mix, replacing 10% of those Random Traders to see if a mean-reversion strategy could actually step in and stabilize the market.</p>
+              <p>As for how the market handles the math, pricing is driven by Petrov's Price Response Function, meaning net demand is what directly forces price changes. On the supply side, Gibrat's Law dictates Bitcoin's growth, kicking out a +10% supply increase every 90 days that gets distributed to agents based on how much crypto they already hold. To keep things realistic and mimic real-world portfolio rebalancing, I built in a market correction mechanism that triggers every 200 days. Finally, after tuning the parameters, I found that an optimal trend-length of <em>n</em> = 10 worked best across all the different chartist subtypes.
+              </p>
+            </div>
+            <div class="sp-section">
+              <h4 class="sp-h4">Results</h4>
+              <div class="results">
+                <div class="res">Random Traders accumulated the most wealth (mean £231,016) &mdash; a counterintuitive finding driven by their heavy Bitcoin exposure during price surges</div>
+                <div class="res">Momentum-Dominant chartists led among structured strategies (£159,935), with highest exposure time (~52%) capitalising on trends</div>
+                <div class="res">Balanced chartists had the highest win rate (52.47%) and lowest drawdown among chartists (£23,949) &mdash; most consistent overall</div>
+                <div class="res">Contrarian Traders stabilised the market: Bitcoin price capped at ~7,000 GBP vs ~11,000 GBP without them, with lower volatility spikes</div>
+                <div class="res">Alternating chartists performed worst: lowest wealth (£113,277), lowest win rate (47.33%), only 37% exposure time</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT: both interactives stacked -->
+          <div class="sp-right sp-right-stack">
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Live Market Simulation</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:1rem;line-height:1.5">Adjust trader proportions and run the simulation to see how agent composition affects market dynamics and relative wealth outcomes.</p>
+              <div class="trading-controls">
+                <div class="t-ctrl"><label>Momentum Traders</label><input type="range" id="t-m-page" min="0" max="40" value="25"/></div>
+                <div class="t-ctrl"><label>RSI Traders</label><input type="range" id="t-r-page" min="0" max="40" value="20"/></div>
+                <div class="t-ctrl"><label>Contrarians</label><input type="range" id="t-c-page" min="0" max="40" value="15"/></div>
+                <div class="t-ctrl"><label>Random Traders</label><input type="range" id="t-rn-page" min="0" max="40" value="40"/></div>
+              </div>
+              <canvas id="trade-c-page" height="180" style="width:100%;border:1px solid var(--border);background:#fff;display:block;"></canvas>
+              <div style="font-size:.65rem;color:var(--soft);margin-top:.35rem;line-height:1.5">Simulated BTC/GBP price over 1,750 days. More momentum traders → larger swings. More contrarians → price stabilisation near ~7k GBP.</div>
+              <div class="trade-btns">
+                <button class="trading-btn" onclick="runSimPage()" style="flex:1">▶ Run Simulation</button>
+                <button class="trading-btn ghost" onclick="resetSimPage()" style="flex:0 0 auto;width:auto">Reset</button>
+              </div>
+            </div>
+            <!-- Agent Performance Scorecard -->
+            <div class="proj-interactive" style="background:var(--off);border:1px solid var(--border);padding:1.5rem">
+              <div class="demo-label"><div class="pulse"></div>Agent Performance Scorecard</div>
+              <p style="font-size:.75rem;color:var(--soft);margin-bottom:.6rem;line-height:1.5">Real numbers from Table 4. Click a metric to re-rank &mdash; the surprising winner isn't who you'd expect.</p>
+              <div id="sc-tabs" style="display:flex;gap:.4rem;margin-bottom:.75rem;flex-wrap:wrap">
+                <button class="als-btn active" onclick="setScorecardMetric('wealth',this)">Total Wealth</button>
+                <button class="als-btn" onclick="setScorecardMetric('winrate',this)">Win Rate</button>
+                <button class="als-btn" onclick="setScorecardMetric('drawdown',this)">Max Drawdown</button>
+                <button class="als-btn" onclick="setScorecardMetric('exposure',this)">Exposure Time</button>
+              </div>
+              <div id="sc-chart" style="width:100%"></div>
+              <div id="sc-insight" style="margin-top:.75rem;font-size:.7rem;color:var(--mid);background:white;border:1px solid var(--border);border-radius:6px;padding:.6rem .9rem;line-height:1.6"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="sp-paper-section">
+          <div class="sp-paper-header">
+            <div class="sp-h4" style="margin:0">Read the Paper</div>
+            <div style="font-size:.75rem;color:var(--soft)">Agent-Based Modelling · University of Edinburgh · 2024</div>
+          </div>
+          <div class="sp-paper-embed">
+            <iframe src="trading.pdf" width="100%" height="850" style="border:none;border-radius:20px;background:white;"></iframe>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+<section class="page page--scrollable" id="experience" data-page="experience">
+  <div class="page-main page-scroll">
+  <div class="exp-wrap">
+  <div class="exp-bg">PATH</div>
+  <div class="exp-inner page-enter">
+    <div class="exp-header">
+      <h2 class="exp-title">Where I've<br/><em>been.</em></h2>
+      <div class="exp-tabs" role="tablist">
+        <button class="exp-tab is-active" role="tab" aria-selected="true" data-exp-tab="work">Work</button>
+        <button class="exp-tab" role="tab" aria-selected="false" data-exp-tab="education">Education</button>
+      </div>
+    </div>
+    <div class="exp-panels">
+      <div class="exp-panel is-active" data-exp-panel="work">
+        <div class="exp-grid">
+          <div class="exp-card">
+            <span class="exp-type-badge">WORK</span>
+            <div class="exp-period">Dec 2023 &mdash; Jun 2024</div>
+            <div class="exp-role">Data Analyst</div>
+            <div class="exp-company">Reliance Foundation Youth Sport · Navi Mumbai</div>
+            <ul class="exp-bullets">
+              <li>Collaborated with Indian Olympic track athletes to analyze biomechanics, pre-competition and in-competition stats to identify performance improvement opportunities</li>
+              <li>Developed comprehensive, data-driven training plans tailored to each athlete's individual needs</li>
+              <li>Applied ML algorithms to identify meaningful patterns in athlete data &mdash; enabling data-driven coaching strategies</li>
+            </ul>
+            <div class="exp-tag-row">
+              <span class="exp-tag">Sport Biomechanics</span>
+              <span class="exp-tag">Motion Analysis</span>
+              <span class="exp-tag">Python</span>
+              <span class="exp-tag">Machine Learning</span>
+              <span class="exp-tag">Perfromance Dashboards</span>
+            </div>
+          </div>
+          <div class="exp-card">
+            <span class="exp-type-badge">WORK</span>
+            <div class="exp-period">May 2023 &mdash; Nov 2023</div>
+            <div class="exp-role">Data Analyst</div>
+            <div class="exp-company">Pratech Brands / HyugaLife · Mumbai</div>
+            <ul class="exp-bullets">
+              <li>Led a price elasticity project &mdash; in-depth analysis of price-demand relationships across a portfolio of 500+ products</li>
+              <li>Built a predictive pricing model using advanced ML, enabling optimized pricing strategies and maximized sales</li>
+              <li>Presented to senior management; model drove an <strong style="color:var(--gold)">80% increase in sales</strong> for the top 500 products</li>
+            </ul>
+            <div class="exp-tag-row">
+              <span class="exp-tag">Price Elasticity</span>
+              <span class="exp-tag">Demand Forecasting</span>
+              <span class="exp-tag">Feature Engineering</span>
+              <span class="exp-tag">Regression Modelling</span>
+              <span class="exp-tag">Python</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="exp-panel" data-exp-panel="education">
+        <div class="exp-grid">
+          <div class="exp-card">
+            <span class="exp-type-badge">EDUCATION</span>
+            <div class="exp-period">Sep 2024 &mdash; Nov 2025</div>
+            <div class="exp-role">MSc Data Science</div>
+            <div class="exp-company">University of Edinburgh · School of Informatics</div>
+            <ul class="exp-bullets">
+              <li>Dissertation focused on learning how proteins move, using physics-informed machine learning to model conformational changes in biological systems</li>
+              <li>Built a foundation across machine learning, AI ethics, behavioural analytics, and data management while working on applied, project-based coursework</li>
+              <li>Applied those skills across projects in healthcare AI, computational biology, sports performance, financial networks, and predictive analytics</li>
+            </ul>
+            <div class="exp-tag-row">
+              <span class="exp-tag">Variational Autoencoders</span>
+              <span class="exp-tag">Representation Learning</span>
+              <span class="exp-tag">Computational Biology</span>
+              <span class="exp-tag">PyTorch</span>
+              <span class="exp-tag">Protein Dynamics</span>
+            </div>
+          </div>
+          <div class="exp-card">
+            <span class="exp-type-badge">EDUCATION</span>
+            <div class="exp-period">Jul 2019 &mdash; Apr 2023</div>
+            <div class="exp-role">B.Tech Mechatronics</div>
+            <div class="exp-company">NMIMS Mumbai · Mukesh Patel School</div>
+            <ul class="exp-bullets">
+              <li>Designed and built a search-and-rescue drone for my final-year project, applying robotics and control systems to a real-world problem</li>
+              <li>Developed a foundation in robotics, embedded systems, and automation, along with the engineering mindset that still shapes how I approach machine learning today</li>
+              <li>Interned at ComXR, contributing to immersive technology projects and gaining hands-on experience working in multidisciplinary teams</li>
+            </ul>
+            <div class="exp-tag-row">
+              <div class="exp-tag-row">
+                <span class="exp-tag">Robotics</span>
+                <span class="exp-tag">Autonomous Systems</span>
+                <span class="exp-tag">Control Systems</span>
+                <span class="exp-tag">Embedded Systems</span>
+                <span class="exp-tag">Sensor Integration</span>
+            </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  <div class="toolkit-section">
+
+    <div class="toolkit-header">
+      <div class="section-eyebrow">Methods I Work With</div>
+    </div>
+  
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>Python</span>
+        <span>PyTorch</span>
+        <span>Machine Learning</span>
+        <span>Deep Learning</span>
+        <span>Feature Engineering</span>
+        <span>Statistical Modeling</span>
+        <span>scikit-learn</span>
+        <span>SQL</span>
+        <span>Data Visualization</span>
+        <span>Power BI</span>
+  
+        <!-- repeat once -->
+        <span>Python</span>
+        <span>PyTorch</span>
+        <span>Machine Learning</span>
+        <span>Deep Learning</span>
+        <span>Feature Engineering</span>
+        <span>Statistical Modeling</span>
+        <span>scikit-learn</span>
+        <span>SQL</span>
+        <span>Data Visualization</span>
+        <span>Power BI</span>
+      </div>
+    </div>
+  
+    <div class="marquee marquee-reverse">
+      <div class="marquee-track">
+        <span>Computational Biology</span>
+        <span>Protein Dynamics</span>
+        <span>Wav2Vec 2.0</span>
+        <span>Network Science</span>
+        <span>MoLearn</span>
+        <span>VMD</span>
+        <span>Research</span>
+        <span>Google Cloud</span>
+        <span>Git</span>
+        <span>Docker</span>
+  
+        <!-- repeat once -->
+        <span>Computational Biology</span>
+        <span>Protein Dynamics</span>
+        <span>Wav2Vec 2.0</span>
+        <span>Network Science</span>
+        <span>MoLearn</span>
+        <span>VMD</span>
+        <span>Research</span>
+        <span>Google Cloud</span>
+        <span>Git</span>
+        <span>Docker</span>
+      </div>
+    </div>
+  
+    <a href="resume.pdf" class="toolkit-resume">
+      View Full Resume →
+    </a>
+  
+  </div>
+
+  </div>
+  </div>
+  </div>
+
+</section>
+<section class="page" id="contact" data-page="contact">
+  <div class="page-shell" style="background:#fff;height:100%;display:flex;flex-direction:column;position:relative;overflow:hidden">
+    <div class="contact-bleed">HELLO</div>
+    <div class="contact-wrap page-enter">
+      <div class="contact-left">
+        <p class="contact-eyebrow">Get In Touch</p>
+        <h2 class="contact-heading">Let's build<br/>something<br/><em>real.</em></h2>
+        <p class="contact-subtext">I'm fascinated by how data can help us better understand people, from proteins and disease to movement, performance, and health. If you're working on something meaningful, I'd love to hear about it.</p>
+        <div class="contact-available">
+          <div class="contact-available-dot"></div>
+          <span class="contact-available-text">Available for new opportunities · Actively interviewing</span>
+        </div>
+      </div>
+      <div class="contact-right">
+        <a href="mailto:anayagandhi04@gmail.com" class="clink">
+          <div class="clink-icon">✉</div>
+          <div class="clink-text">
+            <div class="clink-label">Email</div>
+            <div class="clink-value">anayagandhi04@gmail.com</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <a href="https://linkedin.com/in/anaya-gandhi-6593661b4" target="_blank" rel="noopener" class="clink">
+          <div class="clink-icon" style="font-weight:700;font-size:.85rem">in</div>
+          <div class="clink-text">
+            <div class="clink-label">LinkedIn</div>
+            <div class="clink-value">anaya-gandhi-6593661b4</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <a href="https://github.com/gandhianaya" target="_blank" rel="noopener" class="clink">
+          <div class="clink-icon" style="display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 16 16" fill="var(--navy)"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"/></svg></div>
+          <div class="clink-text">
+            <div class="clink-label">GitHub</div>
+            <div class="clink-value">gandhianaya</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <div class="contact-divider"></div>
+        <a href="resume.pdf" download class="clink clink-cv">
+          <div class="clink-icon">↓</div>
+          <div class="clink-text">
+            <div class="clink-label">Resume</div>
+            <div class="clink-value">Download CV &mdash; PDF</div>
+          </div>
+          <span class="clink-arrow">→</span>
+        </a>
+        <p class="contact-footer-note">© 2025 Anaya Gandhi · MSc Data Science, University of Edinburgh</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<template id="contact-block-tpl">
+  <div class="page-contact">
+    <div class="contact-strip-inner">
+      <div class="contact-strip-left">Let's build something <em>real.</em></div>
+      <div class="contact-strip-links">
+        <a href="mailto:anayagandhi04@gmail.com" class="contact-strip-link">anayagandhi04@gmail.com</a>
+        <a href="https://linkedin.com/in/anaya-gandhi-6593661b4" target="_blank" rel="noopener" class="contact-strip-link">LinkedIn</a>
+        <a href="https://github.com/gandhianaya" target="_blank" rel="noopener" class="contact-strip-link">GitHub</a>
+      </div>
+      <a href="#contact" class="contact-strip-cta" data-nav="contact">Get in Touch →</a>
+      <span class="contact-strip-copy">© 2025 Anaya Gandhi</span>
+    </div>
+  </div>
+</template>
+
+
+<aside class="page-rail" aria-label="Page navigation">
+  <div class="page-dots" id="page-dots"></div>
+  <div class="page-counter" id="page-counter">01 &mdash; About</div>
+</aside>
+<div class="page-hint" id="page-hint">↓ or use arrow keys to explore</div>
+
+</div>
+
+<script>
+/* ── PAGE ROUTER ── */
+const PAGE_ORDER=[
+  'about',
+  'projects',
+  'protein',
+  'als',
+  'spotify',
+  'network',
+  'trading',
+  'experience',
+  'contact'
+];
+const PAGE_LABELS={about:'About',projects:'Research',protein:'Protein Research',als:'ALS Research', spotify:'Spotify Project', network:'Network Research', trading:'Trading Research',experience:'Experience',contact:'Contact'};
+let currentPage='about',isTransitioning=false,hasNavigated=false,_popNav=false;
+const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DUR=reducedMotion?0:480;
+
+function getPageEl(id){return document.querySelector(`.page[data-page="${id}"]`);}
+function getPageIndex(id){return PAGE_ORDER.indexOf(id);}
+
+function updateUI(id){
+  const idx=getPageIndex(id);
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    const active=el.dataset.nav===id;
+    el.classList.toggle('is-active',active);
+    if(el.tagName==='A')el.setAttribute('aria-current',active?'page':'false');
+  });
+  document.querySelectorAll('.page-dot').forEach((dot,i)=>{
+    dot.classList.toggle('is-active',PAGE_ORDER[i]===id);
+    dot.setAttribute('aria-current',PAGE_ORDER[i]===id?'true':'false');
+  });
+  const counter=document.getElementById('page-counter');
+  if(counter)counter.textContent=`${String(idx+1).padStart(2,'0')} — ${PAGE_LABELS[id]}`;
+  document.body.dataset.page=id;
+  try{if(!_popNav&&location.hash!==`#${id}`)history.pushState(null,'',`#${id}`);}catch(e){}
+  _popNav=false;
+}
+
+function onPageEnter(id){
+  if(id==='projects'){
+    const open=document.querySelector('.proj-card.open');
+    if(open){
+      const cid=open.id;
+      setTimeout(()=>{
+        if(cid==='c1')initVAE();
+        if(cid==='c2')initALS();
+        if(cid==='c3')initTrading();
+        if(cid==='c4')initNetwork();
+      },80);
+    }
+  }
+  if(id==='als'){
+    setTimeout(()=>{
+      initALS();
+      if(window.drawAlsCM)window.drawAlsCM();
+    },80);
+  }
+  if(id==='protein'){
+    setTimeout(()=>{
+      initVAEPage();
+      if(window.initVaeIter)window.initVaeIter();
+    },80);
+  }
+  if(id==='network'){
+    setTimeout(()=>{
+      initNetworkPage();
+      if(window.initCoinvest)window.initCoinvest();
+    },80);
+  }
+  if(id==='trading'){
+    setTimeout(()=>{
+      initTradingPage();
+      if(window.initScorecard)window.initScorecard();
+    },80);
+  }
+  if(id==='spotify'){
+    setTimeout(()=>{
+      spUpdate();
+      spInitPaper();
+      if(window.initSpTraj)window.initSpTraj();
+    },80);
+  }
+  if(id==='skills'){
+    document.querySelectorAll('.skill-bar[data-w]').forEach(bar=>{
+      bar.style.width='0';
+      requestAnimationFrame(()=>{bar.style.width=bar.dataset.w+'%';});
+    });
+    initSkillsSpotlight();
+    drawSkillsRadar(activeSkillId);
+  }
+}
+
+function goToPage(id,direction){
+  if(isTransitioning||id===currentPage||getPageIndex(id)<0)return;
+  const from=getPageEl(currentPage),to=getPageEl(id);
+  if(!from||!to)return;
+  isTransitioning=true;
+  if(!hasNavigated){
+    hasNavigated=true;
+    const hint=document.getElementById('page-hint');
+    if(hint)hint.classList.add('is-hidden');
+  }
+  const forward=direction!==undefined?direction>0:getPageIndex(id)>getPageIndex(currentPage);
+  const exitCls=forward?'is-exiting-forward':'is-exiting-back';
+  const enterCls=forward?'is-entering-forward':'is-entering-back';
+  from.classList.remove('is-active');
+  from.classList.add(exitCls);
+  to.classList.add(enterCls);
+  to.style.visibility='visible';
+  requestAnimationFrame(()=>{
+    to.classList.add('is-active');
+    to.classList.remove(enterCls);
+  });
+  setTimeout(()=>{
+    from.classList.remove(exitCls);
+    to.classList.remove(enterCls);
+    currentPage=id;
+    updateUI(id);
+    onPageEnter(id);
+    isTransitioning=false;
+  },DUR);
+}
+
+function goNext(){const i=getPageIndex(currentPage);if(i<PAGE_ORDER.length-1)goToPage(PAGE_ORDER[i+1],1);}
+function goPrev(){const i=getPageIndex(currentPage);if(i>0)goToPage(PAGE_ORDER[i-1],-1);}
+
+
+function injectContactBlocks(){
+  const tpl=document.getElementById('contact-block-tpl');
+  if(!tpl)return;
+  document.querySelectorAll('.page[data-page]').forEach(page=>{
+    if(page.dataset.page==='contact')return;
+    const main=page.querySelector('.page-main');
+    if(main&&!main.querySelector('.page-contact')){
+      main.appendChild(tpl.content.cloneNode(true));
+    }
+  });
+}
+
+function initPageRouter(){
+  const dotsEl=document.getElementById('page-dots');
+  PAGE_ORDER.forEach(id=>{
+    const btn=document.createElement('button');
+    btn.className='page-dot'+(id===currentPage?' is-active':'');
+    btn.type='button';
+    btn.setAttribute('aria-label',PAGE_LABELS[id]);
+    btn.addEventListener('click',()=>goToPage(id));
+    dotsEl.appendChild(btn);
+  });
+  document.querySelectorAll('[data-nav]').forEach(el=>{
+    el.addEventListener('click',e=>{
+      e.preventDefault();
+      goToPage(el.dataset.nav);
+    });
+    if(el.tagName==='DIV'){
+      el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ') {e.preventDefault();goToPage(el.dataset.nav);}});
+    }
+  });
+  document.addEventListener('click',e=>{
+    const el=e.target.closest('[data-nav]');
+    if(el&&!el.closest('.nav-links')&&!el.closest('.page-dots')){
+      e.preventDefault();
+      goToPage(el.dataset.nav);
+    }
+  });
+  document.addEventListener('keydown',e=>{
+    const tag=document.activeElement?.tagName;
+    if(tag==='INPUT'||tag==='TEXTAREA'||(tag==='BUTTON'&&document.activeElement?.closest('.exp-tabs,.skills-cats,.stack-match-btns')))return;
+    if(['about','projects','experience'].includes(currentPage)){
+      const scrollEl=document.querySelector('.page.is-active .page-main.page-scroll');
+      if(scrollEl){
+        if(['ArrowDown','ArrowRight'].includes(e.key)&&scrollEl.scrollTop+scrollEl.clientHeight<scrollEl.scrollHeight-8)return;
+        if(['ArrowUp','ArrowLeft'].includes(e.key)&&scrollEl.scrollTop>8)return;
+      }
+    }
+    if(['ArrowDown','ArrowRight'].includes(e.key)){e.preventDefault();goNext();}
+    if(['ArrowUp','ArrowLeft'].includes(e.key)){e.preventDefault();goPrev();}
+  });
+  let touchY=0;
+  document.addEventListener('touchstart',e=>{touchY=e.changedTouches[0].clientY;},{passive:true});
+  document.addEventListener('touchend',e=>{
+    if(document.querySelector('.page.is-active .page-main.page-scroll')?.scrollTop>10)return;
+    const dy=e.changedTouches[0].clientY-touchY;
+    if(Math.abs(dy)<50)return;
+    if(dy<0)goNext();else goPrev();
+  },{passive:true});
+  const raw=location.hash.replace('#','');
+  const hash={hero:'about'}[raw]||raw;
+  if(hash&&PAGE_ORDER.includes(hash)&&hash!=='about'){
+    const from=getPageEl('about'),to=getPageEl(hash);
+    from.classList.remove('is-active');
+    to.classList.add('is-active');
+    currentPage=hash;
+    hasNavigated=true;
+    const hint=document.getElementById('page-hint');
+    if(hint)hint.classList.add('is-hidden');
+    updateUI(hash);
+    onPageEnter(hash);
+  }else updateUI(currentPage);
+  history.replaceState(null,'',`#${currentPage}`);
+  window.addEventListener('popstate',()=>{
+    const raw=location.hash.replace('#','');
+    const h={hero:'about'}[raw]||raw||'about';
+    if(PAGE_ORDER.includes(h)&&h!==currentPage){_popNav=true;goToPage(h);}
+  });
+}
+
+/* ── EXPERIENCE TABS ── */
+function initExpTabs(){
+  document.querySelectorAll('[data-exp-tab]').forEach(tab=>{
+    tab.addEventListener('click',()=>{
+      const target=tab.dataset.expTab;
+      document.querySelectorAll('[data-exp-tab]').forEach(t=>{
+        t.classList.toggle('is-active',t===tab);
+        t.setAttribute('aria-selected',t===tab?'true':'false');
+      });
+      document.querySelectorAll('[data-exp-panel]').forEach(p=>{
+        p.classList.toggle('is-active',p.dataset.expPanel===target);
+      });
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  injectContactBlocks();
+  initPageRouter();
+  initExpTabs();
+  initSkills();
+});
+
+/* ── INTERACTIVE SKILLS ── */
+const SKILLS_DATA=[
+  {id:'pytorch',name:'PyTorch',cat:'ml',level:90,desc:'Primary deep learning framework — VAEs, fine-tuning Wav2Vec, custom loss functions.',projects:['Protein VAE','ALS Speech']},
+  {id:'sklearn',name:'scikit-learn',cat:'ml',level:92,desc:'Classical ML pipelines, clustering, regression, and model evaluation.',projects:['Spotify Clusters','HyugaLife Pricing']},
+  {id:'vae',name:'VAE / Generative',cat:'ml',level:85,desc:'Physics-informed variational autoencoders for molecular conformational landscapes.',projects:['Protein VAE']},
+  {id:'wav2vec',name:'Wav2Vec 2.0',cat:'ml',level:78,desc:'Self-supervised speech representations for dysarthria and ALS detection.',projects:['ALS Speech']},
+  {id:'stats',name:'Statistical Modeling',cat:'ml',level:88,desc:'Probabilistic programming, hypothesis testing, and uncertainty quantification.',projects:['Trading ABM','Spotify Clusters']},
+  {id:'python',name:'Python',cat:'lang',level:95,desc:'Daily driver across research, analysis, and production-style ML workflows.',projects:['All Projects']},
+  {id:'r',name:'R',cat:'lang',level:75,desc:'Statistical analysis and visualization for coursework and exploratory work.',projects:['Coursework']},
+  {id:'sql',name:'SQL',cat:'lang',level:82,desc:'Data extraction, aggregation, and pipeline queries for analytics roles.',projects:['HyugaLife Pricing']},
+  {id:'pandas',name:'Pandas / NumPy',cat:'lang',level:93,desc:'Data wrangling, feature engineering, and numerical computing at scale.',projects:['All Projects']},
+  {id:'networkx',name:'NetworkX',cat:'lang',level:72,desc:'Graph construction, centrality metrics, and bipartite investor networks.',projects:['MSFT Network']},
+  {id:'bi',name:'Power BI / Tableau',cat:'tools',level:85,desc:'Dashboards and stakeholder-facing visualizations for business analytics.',projects:['HyugaLife Pricing']},
+  {id:'git',name:'Git / Docker',cat:'tools',level:80,desc:'Version control and reproducible environments for research and deployment.',projects:['All Projects']},
+  {id:'gcp',name:'Google Cloud',cat:'tools',level:70,desc:'Cloud compute and storage for ML experiments and data pipelines.',projects:['Research']},
+  {id:'vmd',name:'VMD (molecular)',cat:'tools',level:75,desc:'Molecular visualization and trajectory analysis for protein dynamics.',projects:['Protein VAE']},
+  {id:'molearn',name:'MoLearn',cat:'tools',level:78,desc:'Molecular ML toolkit for trajectory analysis and dimensionality reduction.',projects:['Protein VAE']},
+];
+const STACK_MAP={
+  health:['pytorch','wav2vec','stats','python','pandas'],
+  bio:['pytorch','vae','vmd','molearn','stats'],
+  sports:['sklearn','python','pandas','bi','sql']
+};
+const STACK_MSG={
+  health:'Health AI stack lights up — speech models, clinical stats, and Python pipelines.',
+  bio:'Computational biology — generative models, molecular tools, and deep ML.',
+  sports:'Sports analytics — classical ML, data wrangling, and visualization.'
+};
+const RADAR_AXES=[
+  {key:'ml',label:'ML'},
+  {key:'lang',label:'Data'},
+  {key:'tools',label:'Tools'},
+  {key:'research',label:'Research'},
+  {key:'viz',label:'Viz'}
+];
+let activeSkillCat='ml',activeSkillId=null,activeStack=null;
+
+function avgCat(cat){
+  const items=cat==='research'?SKILLS_DATA.filter(s=>['vae','stats','networkx','molearn'].includes(s.id))
+    :cat==='viz'?SKILLS_DATA.filter(s=>['bi','r'].includes(s.id))
+    :SKILLS_DATA.filter(s=>s.cat===cat);
+  return items.reduce((a,s)=>a+s.level,0)/(items.length||1);
+}
+
+function drawSkillsRadar(highlightId){
+  const cv=document.getElementById('skills-radar');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||280,H=200;cv.width=W;cv.height=H;
+  const cx=W/2,cy=H/2+4,r=Math.min(W,H)*.36;
+  const vals=RADAR_AXES.map(a=>a.key==='research'?avgCat('research'):a.key==='viz'?avgCat('viz'):avgCat(a.key));
+  const n=vals.length;
+  ctx.clearRect(0,0,W,H);
+  for(let ring=1;ring<=4;ring++){
+    ctx.beginPath();ctx.strokeStyle='rgba(0,0,0,.06)';ctx.lineWidth=1;
+    for(let i=0;i<=n;i++){
+      const ang=-Math.PI/2+i/n*Math.PI*2;
+      const rr=r*ring/4,px=cx+Math.cos(ang)*rr,py=cy+Math.sin(ang)*rr;
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  for(let i=0;i<n;i++){
+    const ang=-Math.PI/2+i/n*Math.PI*2;
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r);
+    ctx.strokeStyle='rgba(0,0,0,.06)';ctx.stroke();
+    ctx.fillStyle='rgba(0,0,0,.45)';ctx.font='9px Inter';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(RADAR_AXES[i].label,cx+Math.cos(ang)*(r+14),cy+Math.sin(ang)*(r+14));
+  }
+  ctx.beginPath();
+  vals.forEach((v,i)=>{
+    const ang=-Math.PI/2+i/n*Math.PI*2;
+    const px=cx+Math.cos(ang)*r*(v/100),py=cy+Math.sin(ang)*r*(v/100);
+    i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+  });
+  ctx.closePath();
+  ctx.fillStyle='rgba(27,43,75,.15)';ctx.fill();
+  ctx.strokeStyle='#1B2B4B';ctx.lineWidth=2;ctx.stroke();
+  if(highlightId){
+    const sk=SKILLS_DATA.find(s=>s.id===highlightId);
+    if(sk){
+      ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);ctx.fillStyle='#B8976A';ctx.fill();
+    }
+  }
+}
+
+function renderSkillNodes(){
+  const orbit=document.getElementById('skills-orbit');
+  if(!orbit)return;
+  const list=activeSkillCat==='all'?SKILLS_DATA:SKILLS_DATA.filter(s=>s.cat===activeSkillCat);
+  const stackSet=activeStack?new Set(STACK_MAP[activeStack]):null;
+  orbit.innerHTML=list.map(s=>{
+    let cls='skill-node';
+    if(activeSkillId===s.id)cls+=' is-active';
+    else if(stackSet&&stackSet.has(s.id))cls+=' is-highlighted';
+    return `<button class="${cls}" data-skill="${s.id}" type="button">${s.name}</button>`;
+  }).join('');
+  orbit.querySelectorAll('[data-skill]').forEach(btn=>{
+    btn.addEventListener('click',()=>selectSkill(btn.dataset.skill));
+  });
+}
+
+function selectSkill(id){
+  activeSkillId=id;
+  activeStack=null;
+  document.querySelectorAll('.stack-btn').forEach(b=>b.classList.remove('is-active'));
+  document.getElementById('stack-result').textContent='See which skills light up for each domain.';
+  const skill=SKILLS_DATA.find(s=>s.id===id);
+  if(!skill)return;
+  renderSkillNodes();
+  document.getElementById('skill-spot-name').textContent=skill.name;
+  document.getElementById('skill-spot-desc').textContent=skill.desc;
+  document.getElementById('skill-spot-level').textContent=skill.level>=90?'Expert':skill.level>=80?'Advanced':skill.level>=70?'Proficient':'Capable';
+  const bar=document.getElementById('skill-spot-bar');
+  bar.style.width='0';
+  requestAnimationFrame(()=>{bar.style.width=skill.level+'%';});
+  document.getElementById('skill-spot-projects').innerHTML=skill.projects.map(p=>`<span class="skill-spot-proj">${p}</span>`).join('');
+  drawSkillsRadar(id);
+}
+
+function initSkillsSpotlight(){
+  if(!activeSkillId){
+    const first=SKILLS_DATA.find(s=>activeSkillCat==='all'||s.cat===activeSkillCat);
+    if(first)selectSkill(first.id);
+  }else drawSkillsRadar(activeSkillId);
+}
+
+function initSkills(){
+  document.querySelectorAll('[data-cat]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeSkillCat=btn.dataset.cat;
+      activeSkillId=null;
+      activeStack=null;
+      document.querySelectorAll('[data-cat]').forEach(b=>b.classList.toggle('is-active',b===btn));
+      document.querySelectorAll('.stack-btn').forEach(b=>b.classList.remove('is-active'));
+      renderSkillNodes();
+      initSkillsSpotlight();
+    });
+  });
+  document.querySelectorAll('[data-stack]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      activeStack=btn.dataset.stack;
+      activeSkillId=null;
+      document.querySelectorAll('.stack-btn').forEach(b=>b.classList.toggle('is-active',b===btn));
+      document.getElementById('stack-result').textContent=STACK_MSG[activeStack];
+      renderSkillNodes();
+      drawSkillsRadar(null);
+    });
+  });
+  renderSkillNodes();
+  drawSkillsRadar(null);
+  window.addEventListener('resize',()=>drawSkillsRadar(activeSkillId));
+}
+
+/* ── CARD TOGGLE ── */
+function toggleCard(id){
+  const card=document.getElementById(id);
+  const wasOpen=card.classList.contains('open');
+  document.querySelectorAll('.proj-card').forEach(c=>c.classList.remove('open'));
+  if(!wasOpen){
+    card.classList.add('open');
+    setTimeout(()=>{
+      if(id==='c1')initVAE();
+      if(id==='c2')initALS();
+      if(id==='c3')initTrading();
+      if(id==='c4')initNetwork();
+      if(id==='c5')updateCluster();
+    },120);
+  }
+}
+
+/* ── DEMO 1: VAE ── */
+function initVAE(){
+  const cv=document.getElementById('vae-c');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const z1El=document.getElementById('vae-z1');
+  const z2El=document.getElementById('vae-z2');
+  const bEl=document.getElementById('vae-b');
+  function draw(){
+    const z1=parseFloat(z1El.value),z2=parseFloat(z2El.value),b=parseFloat(bEl.value);
+    document.getElementById('v-z1').textContent=z1.toFixed(2);
+    document.getElementById('v-z2').textContent=z2.toFixed(2);
+    document.getElementById('v-b').textContent=b.toFixed(2);
+    const W=cv.offsetWidth||380,H=180;
+    cv.width=W;cv.height=H;
+    ctx.clearRect(0,0,W,H);
+    const sx=W/2,sy=H/2,sc=Math.min(W,H)/7;
+    const clusters=[{cx:-1.4,cy:-0.9,r:.75},{cx:1.1,cy:-1.4,r:.6},{cx:.2,cy:1.7,r:.65},{cx:-1.7,cy:1.4,r:.5},{cx:1.9,cy:.9,r:.45}];
+    clusters.forEach((cl,i)=>{
+      const px=sx+cl.cx*sc,py=sy-cl.cy*sc,rPx=cl.r*sc*(1+b*.4);
+      const g=ctx.createRadialGradient(px,py,0,px,py,rPx);
+      g.addColorStop(0,i%2===0?'rgba(27,43,75,.3)':'rgba(184,151,106,.25)');
+      g.addColorStop(1,'rgba(0,0,0,0)');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rPx,0,Math.PI*2);ctx.fill();
+    });
+    const steps=22;
+    ctx.strokeStyle='rgba(27,43,75,.5)';ctx.lineWidth=1.5;ctx.setLineDash([3,4]);
+    ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+z1*sc,sy-z2*sc);ctx.stroke();
+    ctx.setLineDash([]);
+    for(let i=1;i<=steps;i++){
+      const t=i/steps,px=sx+z1*t*sc,py=sy-z2*t*sc;
+      const n=(Math.sin(i*7.3+z1*3)*.3+Math.cos(i*4.1+z2*2)*.2)*(1-b*.5);
+      ctx.beginPath();ctx.arc(px+n*sc*.15,py+n*sc*.1,2+Math.abs(n)*2,0,Math.PI*2);
+      ctx.fillStyle=`rgba(27,43,75,${.15+t*.7})`;ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(sx+z1*sc,sy-z2*sc,6,0,Math.PI*2);ctx.fillStyle='#1B2B4B';ctx.fill();
+    ctx.beginPath();ctx.arc(sx+z1*sc,sy-z2*sc,10,0,Math.PI*2);ctx.strokeStyle='rgba(27,43,75,.25)';ctx.lineWidth=2;ctx.stroke();
+    ctx.beginPath();ctx.arc(sx,sy,4,0,Math.PI*2);ctx.fillStyle='#B8976A';ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(8,sy);ctx.lineTo(W-8,sy);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(sx,8);ctx.lineTo(sx,H-8);ctx.stroke();
+    const d=Math.sqrt(z1*z1+z2*z2),rmsd=(1.25+d*.08*(1-b*.25)).toFixed(2);
+    ctx.fillStyle='rgba(27,43,75,.65)';ctx.font='600 10px Inter';ctx.textAlign='left';
+    ctx.fillText(`RMSD ≈ ${rmsd} Å`,8,H-6);
+  }
+  [z1El,z2El,bEl].forEach(el=>el.addEventListener('input',draw));
+  draw();
+}
+
+function vaePageDraw(){
+  const cv=document.getElementById('vae-c-page');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const z1=parseFloat(document.getElementById('vae-z1-page').value);
+  const z2=parseFloat(document.getElementById('vae-z2-page').value);
+  const b=parseFloat(document.getElementById('vae-b-page').value);
+  document.getElementById('v-z1-page').textContent=z1.toFixed(2);
+  document.getElementById('v-z2-page').textContent=z2.toFixed(2);
+  document.getElementById('v-b-page').textContent=b.toFixed(2);
+  const W=cv.offsetWidth||380,H=200;
+  cv.width=W;cv.height=H;
+  ctx.clearRect(0,0,W,H);
+  const sx=W/2,sy=H/2,sc=Math.min(W,H)/7;
+  const clusters=[{cx:-1.4,cy:-0.9,r:.75},{cx:1.1,cy:-1.4,r:.6},{cx:.2,cy:1.7,r:.65},{cx:-1.7,cy:1.4,r:.5},{cx:1.9,cy:.9,r:.45}];
+  clusters.forEach((cl,i)=>{
+    const px=sx+cl.cx*sc,py=sy-cl.cy*sc,rPx=cl.r*sc*(1+b*.4);
+    const g=ctx.createRadialGradient(px,py,0,px,py,rPx);
+    g.addColorStop(0,i%2===0?'rgba(27,43,75,.3)':'rgba(184,151,106,.25)');
+    g.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=g;ctx.beginPath();ctx.arc(px,py,rPx,0,Math.PI*2);ctx.fill();
+  });
+  const steps=22;
+  ctx.strokeStyle='rgba(27,43,75,.5)';ctx.lineWidth=1.5;ctx.setLineDash([3,4]);
+  ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(sx+z1*sc,sy-z2*sc);ctx.stroke();
+  ctx.setLineDash([]);
+  for(let i=1;i<=steps;i++){
+    const t=i/steps,px=sx+z1*t*sc,py=sy-z2*t*sc;
+    const n=(Math.sin(i*7.3+z1*3)*.3+Math.cos(i*4.1+z2*2)*.2)*(1-b*.5);
+    ctx.beginPath();ctx.arc(px+n*sc*.15,py+n*sc*.1,2+Math.abs(n)*2,0,Math.PI*2);
+    ctx.fillStyle=`rgba(27,43,75,${.15+t*.7})`;ctx.fill();
+  }
+  ctx.beginPath();ctx.arc(sx+z1*sc,sy-z2*sc,6,0,Math.PI*2);ctx.fillStyle='#1B2B4B';ctx.fill();
+  ctx.beginPath();ctx.arc(sx+z1*sc,sy-z2*sc,10,0,Math.PI*2);ctx.strokeStyle='rgba(27,43,75,.25)';ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.arc(sx,sy,4,0,Math.PI*2);ctx.fillStyle='#B8976A';ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;
+  ctx.beginPath();ctx.moveTo(8,sy);ctx.lineTo(W-8,sy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(sx,8);ctx.lineTo(sx,H-8);ctx.stroke();
+  const d=Math.sqrt(z1*z1+z2*z2),rmsd=(1.25+d*.08*(1-b*.25)).toFixed(2);
+  ctx.fillStyle='rgba(27,43,75,.65)';ctx.font='600 10px Inter';ctx.textAlign='left';
+  ctx.fillText(`RMSD ≈ ${rmsd} Å`,8,H-6);
+}
+function initVAEPage(){
+  vaePageDraw();
+}
+
+
+/* ── DEMO 7: VAE ITERATION JOURNEY ── */
+(function(){
+  // Data from Table 4.10 (VAE model iterations comparison)
+  const STAGES=[
+    {
+      label:'Original VAE',
+      cfg:'dz=8, β=0.05, Config 82 (bond+smooth)',
+      recon:'0.0001 Å',reconOk:false,
+      interp:'~0.0001 Å',interpOk:false,
+      ldist:'0.013',ldistOk:false,
+      problem:'Mode collapse',
+      col:'#dc2626',
+      desc:'<strong>Mode collapse.</strong> Reconstructed training structures extremely well (RMSD ~0.0001 Å) but all interpolated frames were nearly identical. Latent distance between open and closed states was only 0.013 — the model had learned almost nothing about what distinguishes them. The latent space had collapsed to a trivial near-point, preventing any meaningful conformational exploration.',
+      // visual: dots clustered tightly, path nearly zero
+      visualMode:'collapse'
+    },
+    {
+      label:'Improved VAE',
+      cfg:'dz increased, higher latent expressivity',
+      recon:'15.61 Å',reconOk:false,
+      interp:'29–33 Å',interpOk:false,
+      ldist:'0.75',ldistOk:true,
+      problem:'Over-diversity',
+      col:'#d97706',
+      desc:'<strong>Over-diversity.</strong> Increasing latent expressivity fixed collapse — the latent distance jumped to 0.75 — but overcorrected dramatically. Interpolated structures had RMSD values of 29–33 Å, far beyond physically plausible protein domain motions (~1–5 Å). The model lost structural coherence entirely: transitions were unphysically large jumps rather than smooth conformational changes.',
+      visualMode:'overdiversity'
+    },
+    {
+      label:'Balanced VAE',
+      cfg:'dz=64, β=0.05, Config 82 physics',
+      recon:'1.25 Å',reconOk:true,
+      interp:'0.87–1.31 Å',interpOk:true,
+      ldist:'0.19',ldistOk:true,
+      problem:null,
+      col:'#16a34a',
+      desc:'<strong>Optimal balance.</strong> dz=64 threads the needle between collapse and chaos. Reconstruction RMSD is 1.25 Å — faithful to input conformations. Interpolated structures stay within 0.87–1.31 Å of the endpoints, a realistic range for domain rearrangements. Consecutive-step smoothness is 0.048 ± 0.016 Å. The latent distance of 0.19 between open and closed states is biologically significant without being unrealistically large.',
+      visualMode:'balanced'
+    },
+  ];
+
+  let currentStage=0;
+
+  function setVaeStage(i, btn){
+    currentStage=i;
+    document.querySelectorAll('#vae-stage-btns .als-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const s=STAGES[i];
+    const set=(id,val,prop,col)=>{const el=document.getElementById(id);if(!el)return;if(prop==='html')el.innerHTML=val;else el.textContent=val;if(col)el.style[prop]=col;};
+    set('vae-iter-cfg',s.cfg,'textContent');
+    set('vae-iter-recon',s.recon,'textContent');
+    set('vae-iter-recon','','color',s.reconOk?'#16a34a':'#dc2626');
+    set('vae-iter-interp',s.interp,'textContent');
+    set('vae-iter-interp','','color',s.interpOk?'#16a34a':'#dc2626');
+    set('vae-iter-ldist',s.ldist,'textContent');
+    set('vae-iter-ldist','','color',s.ldistOk?'#16a34a':'#dc2626');
+    set('vae-iter-desc',s.desc,'html');
+    const descEl=document.getElementById('vae-iter-desc');if(descEl)descEl.style.borderLeftColor=s.col;
+    drawVaeIter();
+  }
+
+  function drawVaeIter(){
+    const cv=document.getElementById('vae-iter-c');if(!cv)return;
+    const ctx=cv.getContext('2d');
+    const W=cv.offsetWidth||300,H=200;
+    cv.width=W;cv.height=H;
+    const s=STAGES[currentStage];
+    ctx.fillStyle='#f7f3ee';ctx.fillRect(0,0,W,H);
+
+    // Draw open and closed endpoint labels
+    const openPt={x:W*.18,y:H*.35};
+    const closePt={x:W*.82,y:H*.65};
+
+    if(s.visualMode==='collapse'){
+      // Draw two endpoints far apart
+      // Path: all interpolated frames cluster at centre — mode collapse
+      const midX=(openPt.x+closePt.x)/2, midY=(openPt.y+closePt.y)/2;
+      // Faint true path line
+      ctx.strokeStyle='rgba(0,0,0,.1)';ctx.lineWidth=1;ctx.setLineDash([4,6]);
+      ctx.beginPath();ctx.moveTo(openPt.x,openPt.y);ctx.lineTo(closePt.x,closePt.y);ctx.stroke();ctx.setLineDash([]);
+      // Collapsed interpolation dots — all near centre
+      for(let i=0;i<21;i++){
+        const t=i/20;
+        const noise=(Math.sin(i*7.3)*0.5+Math.cos(i*4.1)*0.3);
+        const px=midX+noise*4, py=midY+noise*3;
+        ctx.beginPath();ctx.arc(px,py,3,0,Math.PI*2);
+        ctx.fillStyle=`rgba(220,38,38,${0.3+t*0.4})`;ctx.fill();
+      }
+      // Label
+      ctx.fillStyle='#dc2626';ctx.font='600 9px Inter';ctx.textAlign='center';
+      ctx.fillText('all frames identical',midX,midY-14);
+      ctx.font='8px Inter';ctx.fillStyle='rgba(0,0,0,.4)';
+      ctx.fillText('(collapsed)',midX,midY-4);
+
+    } else if(s.visualMode==='overdiversity'){
+      // Interpolated frames scatter wildly — over-diversity
+      ctx.strokeStyle='rgba(0,0,0,.1)';ctx.lineWidth=1;ctx.setLineDash([4,6]);
+      ctx.beginPath();ctx.moveTo(openPt.x,openPt.y);ctx.lineTo(closePt.x,closePt.y);ctx.stroke();ctx.setLineDash([]);
+      // Wild scatter
+      const seed=42;
+      for(let i=0;i<21;i++){
+        const t=i/20;
+        const idealX=openPt.x+(closePt.x-openPt.x)*t;
+        const idealY=openPt.y+(closePt.y-openPt.y)*t;
+        const scatter=40;
+        const nx=idealX+(Math.sin(i*3.7+1)*scatter), ny=idealY+(Math.cos(i*5.1+2)*scatter);
+        // Arrow from ideal to actual
+        ctx.strokeStyle='rgba(217,119,6,.25)';ctx.lineWidth=1;
+        ctx.beginPath();ctx.moveTo(idealX,idealY);ctx.lineTo(nx,ny);ctx.stroke();
+        ctx.beginPath();ctx.arc(nx,ny,3.5,0,Math.PI*2);
+        ctx.fillStyle=`rgba(217,119,6,${0.4+t*0.4})`;ctx.fill();
+      }
+      ctx.fillStyle='#d97706';ctx.font='600 9px Inter';ctx.textAlign='center';
+      ctx.fillText('29–33 Å jumps — unphysical',W/2,H*.12);
+
+    } else {
+      // Balanced — smooth path between open and closed
+      ctx.strokeStyle='rgba(0,0,0,.08)';ctx.lineWidth=1;ctx.setLineDash([4,6]);
+      ctx.beginPath();ctx.moveTo(openPt.x,openPt.y);ctx.lineTo(closePt.x,closePt.y);ctx.stroke();ctx.setLineDash([]);
+      // Smooth interpolation — small graceful deviations
+      ctx.strokeStyle='rgba(22,163,74,.35)';ctx.lineWidth=1.5;
+      ctx.beginPath();
+      for(let i=0;i<=21;i++){
+        const t=i/21;
+        const idealX=openPt.x+(closePt.x-openPt.x)*t;
+        const idealY=openPt.y+(closePt.y-openPt.y)*t;
+        const wave=Math.sin(t*Math.PI)*8;
+        const nx=idealX+wave*Math.cos(Math.PI/4);
+        const ny=idealY-wave*Math.sin(Math.PI/4);
+        if(i===0)ctx.moveTo(nx,ny); else ctx.lineTo(nx,ny);
+      }
+      ctx.stroke();
+      for(let i=0;i<=21;i++){
+        const t=i/21;
+        const idealX=openPt.x+(closePt.x-openPt.x)*t;
+        const idealY=openPt.y+(closePt.y-openPt.y)*t;
+        const wave=Math.sin(t*Math.PI)*8;
+        const nx=idealX+wave*Math.cos(Math.PI/4);
+        const ny=idealY-wave*Math.sin(Math.PI/4);
+        ctx.beginPath();ctx.arc(nx,ny,3,0,Math.PI*2);
+        ctx.fillStyle=`rgba(22,163,74,${0.3+t*0.5})`;ctx.fill();
+      }
+      ctx.fillStyle='#16a34a';ctx.font='600 9px Inter';ctx.textAlign='center';
+      ctx.fillText('smooth, physically plausible path ✓',W/2,H*.1);
+    }
+
+    // Draw endpoints
+    [openPt,closePt].forEach((pt,i)=>{
+      ctx.beginPath();ctx.arc(pt.x,pt.y,8,0,Math.PI*2);
+      ctx.fillStyle=i===0?'#2563eb':'#dc2626';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+      ctx.fillStyle=i===0?'#2563eb':'#dc2626';
+      ctx.font='700 8px Inter';ctx.textAlign='center';
+      ctx.fillText(i===0?'OPEN':'CLOSED',pt.x,pt.y+(i===0?-14:16));
+    });
+  }
+
+  function initVaeIter(){
+    const cv=document.getElementById('vae-iter-c');if(!cv)return;
+    drawVaeIter();
+  }
+
+  window.setVaeStage=setVaeStage;
+  window.initVaeIter=initVaeIter;
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(document.getElementById('vae-iter-c'))initVaeIter();},400));
+})();
+
+/* ── DEMO 2: ALS ── */
+let alsMode='healthy',alsRaf=null;
+const alsP={
+  healthy:{j:'0.4%',s:'2.1%',h:'22dB',freq:1,amp:.7,noise:.05,col:'#1B2B4B'},
+  mild:{j:'1.8%',s:'6.3%',h:'15dB',freq:.85,amp:.55,noise:.28,col:'#B8976A'},
+  severe:{j:'4.2%',s:'12.8%',h:'8dB',freq:.6,amp:.4,noise:.58,col:'#8B2E2E'}
+};
+function setAls(m,btn){
+  alsMode=m;
+  // Only deactivate siblings of the clicked button (scoped to same container)
+  const container=btn.closest('.als-toggle-row');
+  if(container){
+    container.querySelectorAll('.als-btn').forEach(b=>b.classList.remove('active'));
+  }
+  btn.classList.add('active');
+  const p=alsP[m];
+  // Update whichever metric elements exist (projects page or als page)
+  ['als-j','als-s','als-h'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=[p.j,p.s,p.h][i];
+  });
+  ['als-j-old','als-s-old','als-h-old'].forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el)el.textContent=[p.j,p.s,p.h][i];
+  });
+}
+function initALS(){
+  const cv=document.getElementById('als-c');
+  if(!cv) return;
+
+  const ctx=cv.getContext('2d');
+  let t=0;
+
+  if(alsRaf) cancelAnimationFrame(alsRaf);
+
+  function draw(){
+    const p=alsP[alsMode];
+
+    const W=cv.offsetWidth || 380;
+    const H=90;
+
+    cv.width=W;
+    cv.height=H;
+
+    ctx.fillStyle='#fff';
+    ctx.fillRect(0,0,W,H);
+
+    ctx.strokeStyle='rgba(0,0,0,.04)';
+    ctx.lineWidth=1;
+
+    for(let i=0;i<4;i++){
+      const y=H/4*i;
+      ctx.beginPath();
+      ctx.moveTo(0,y);
+      ctx.lineTo(W,y);
+      ctx.stroke();
+    }
+
+    ctx.beginPath();
+    ctx.strokeStyle=p.col;
+    ctx.lineWidth=1.5;
+
+    for(let x=0;x<W;x++){
+      const tm=(x/W)*4*Math.PI+t;
+      const base=Math.sin(tm*p.freq)*p.amp;
+      const harm=Math.sin(tm*p.freq*2)*p.amp*.25;
+      const n=(Math.random()-.5)*p.noise*2;
+      const j=Math.sin(tm*17.3)*p.noise*.4;
+
+      const y=H/2-(base+harm+n+j)*H*.4;
+
+      if(x===0) ctx.moveTo(x,y);
+      else ctx.lineTo(x,y);
+    }
+
+    ctx.stroke();
+
+    t += .04;
+    alsRaf=requestAnimationFrame(draw);
+  }
+
+  draw();
+
+}
+
+/* ── DEMO 3: TRADING (projects page) ── */
+let simRunning=false,simRaf=null,simStep=0;
+let pH=[5472],wH={m:[7736],r:[7736],c:[7736],rn:[7736]};
+const agCol={m:'#1B2B4B',r:'#B8976A',c:'#8B2E2E',rn:'rgba(0,0,0,.2)'};
+function initTrading(){resetSim();}
+function resetSim(){
+  if(simRaf)cancelAnimationFrame(simRaf);
+  simRunning=false;simStep=0;
+  pH=[5472];wH={m:[7736],r:[7736],c:[7736],rn:[7736]};
+  drawTrading('trade-c');
+}
+function runSim(){
+  if(simRunning)return;simRunning=true;
+  const mn=parseInt(document.getElementById('t-m').value);
+  const rn=parseInt(document.getElementById('t-r').value);
+  function step(){
+    if(!simRunning||simStep>260){simRunning=false;return;}
+    const lp=pH[pH.length-1];
+    const r20=pH.length>20?(lp-pH[pH.length-21])/pH[pH.length-21]:0;
+    const trend=r20>.005?.002:-.001;
+    const rsiS=Math.sin(simStep*.28)*.003;
+    const noise=(Math.random()-.5)*.026;
+    pH.push(Math.max(1000,lp*(1+trend*(mn/40)+rsiS*(rn/40)+noise)));
+    const np=pH[pH.length-1];
+    const push=(k,ret)=>{const l=wH[k][wH[k].length-1];wH[k].push(l*(1+ret*.55));};
+    push('m',r20>.01?np/lp-1:-.001);
+    push('r',Math.sin(simStep*.28)>.45?np/lp-1:0);
+    push('c',-(np/lp-1)*.7);
+    push('rn',(Math.random()-.48)*.016);
+    simStep++;drawTrading('trade-c');
+    simRaf=requestAnimationFrame(step);
+  }
+  step();
+}
+function drawTrading(canvasId){
+  const cv=document.getElementById(canvasId||'trade-c');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const W=cv.offsetWidth||380,H=parseInt(cv.getAttribute('height'))||120;cv.width=W;cv.height=H;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  const src=canvasId==='trade-c-page'?pageTH:wH;
+  const all=Object.values(src).flat();
+  const minV=Math.min(...all)*.98,maxV=Math.max(...all)*1.02,range=maxV-minV||1;
+  ctx.strokeStyle='rgba(0,0,0,.04)';ctx.lineWidth=1;
+  for(let i=0;i<=3;i++){const y=H-i/3*H;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ['m','r','c','rn'].forEach(k=>{
+    const data=src[k];if(!data||data.length<2)return;
+    ctx.beginPath();ctx.strokeStyle=agCol[k];ctx.lineWidth=k==='rn'?1:2;
+    data.forEach((v,i)=>{
+      const x=(i/260)*W,y=H-((v-minV)/range)*H;
+      if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  });
+  const lbls={m:'Momentum',r:'RSI',c:'Contrarian'};
+  let lx=8;
+  ['m','r','c'].forEach(k=>{
+    ctx.fillStyle=agCol[k];ctx.fillRect(lx,6,10,3);
+    ctx.fillStyle='#555';ctx.font='9px Inter';ctx.textAlign='left';
+    ctx.fillText(lbls[k],lx+13,12);lx+=72;
+  });
+}
+
+/* ── DEMO 3: TRADING (project page) ── */
+let simPageRunning=false,simPageRaf=null,simPageStep=0;
+let pagePH=[5472],pageTH={m:[7736],r:[7736],c:[7736],rn:[7736]};
+function initTradingPage(){resetSimPage();}
+function resetSimPage(){
+  if(simPageRaf)cancelAnimationFrame(simPageRaf);
+  simPageRunning=false;simPageStep=0;
+  pagePH=[5472];pageTH={m:[7736],r:[7736],c:[7736],rn:[7736]};
+  drawTrading('trade-c-page');
+}
+function runSimPage(){
+  if(simPageRunning)return;simPageRunning=true;
+  const mn=parseInt(document.getElementById('t-m-page').value);
+  const rn=parseInt(document.getElementById('t-r-page').value);
+  function step(){
+    if(!simPageRunning||simPageStep>260){simPageRunning=false;return;}
+    const lp=pagePH[pagePH.length-1];
+    const r20=pagePH.length>20?(lp-pagePH[pagePH.length-21])/pagePH[pagePH.length-21]:0;
+    const trend=r20>.005?.002:-.001;
+    const rsiS=Math.sin(simPageStep*.28)*.003;
+    const noise=(Math.random()-.5)*.026;
+    pagePH.push(Math.max(1000,lp*(1+trend*(mn/40)+rsiS*(rn/40)+noise)));
+    const np=pagePH[pagePH.length-1];
+    const push=(k,ret)=>{const l=pageTH[k][pageTH[k].length-1];pageTH[k].push(l*(1+ret*.55));};
+    push('m',r20>.01?np/lp-1:-.001);
+    push('r',Math.sin(simPageStep*.28)>.45?np/lp-1:0);
+    push('c',-(np/lp-1)*.7);
+    push('rn',(Math.random()-.48)*.016);
+    simPageStep++;drawTrading('trade-c-page');
+    simPageRaf=requestAnimationFrame(step);
+  }
+  step();
+}
+
+/* ── DEMO 4: NETWORK ── */
+// Data from Table 8 (spanning tree centrality) + community analysis
+const netEras={
+  before:{
+    deg:'0.063',btw:'0.159',cls:'0.195',com:'~102',
+    neighbours:['AMZN','CNI','ADBE'],
+    col:'#1B2B4B',
+    desc:'Reliable bridge stock. MSFT connected Amazon, Adobe, and Canadian National Rail — trusted by a focused group of long-term value investors seeking stable, high-growth tech.',
+    nodes:[
+      {label:'MSFT',x:.5,y:.5,r:15,central:true},
+      {label:'AMZN',x:.25,y:.28,r:9},{label:'ADBE',x:.75,y:.25,r:7},
+      {label:'CNI',x:.8,y:.6,r:6},{label:'GOOG',x:.3,y:.72,r:10},
+      {label:'JPM',x:.65,y:.8,r:7},{label:'BRK.B',x:.12,y:.58,r:8},
+    ],
+    edges:[['MSFT','AMZN',.85],['MSFT','ADBE',.7],['MSFT','CNI',.6],['MSFT','GOOG',.9],['MSFT','JPM',.5],['MSFT','BRK.B',.6],['AMZN','GOOG',.5],['BRK.B','JPM',.45]]
+  },
+  during:{
+    deg:'0.021',btw:'0.000',cls:'0.137',com:'~168',
+    neighbours:['TSLA'],
+    col:'#8B2E2E',
+    desc:'Centrality collapsed to zero. MSFT connected only to Tesla as investors panicked and diversified widely — it was no longer a bridge, just one of many "safe" stocks in expanded portfolios.',
+    nodes:[
+      {label:'MSFT',x:.5,y:.5,r:12,central:true},
+      {label:'TSLA',x:.72,y:.38,r:8},
+      {label:'GOOG',x:.2,y:.3,r:11},{label:'META',x:.8,y:.7,r:10},
+      {label:'WFC',x:.15,y:.65,r:7},{label:'LIN',x:.55,y:.15,r:6},
+      {label:'CHTR',x:.82,y:.32,r:6},
+    ],
+    edges:[['MSFT','TSLA',.4],['GOOG','META',.7],['GOOG','WFC',.4],['META','CHTR',.5],['LIN','GOOG',.3]]
+  },
+  after:{
+    deg:'0.083',btw:'0.577',cls:'0.211',com:'~106',
+    neighbours:['GOOG','SPGI','MSCI','TSLA'],
+    col:'#2A6041',
+    desc:'MSFT roared back as the dominant market bridge — betweenness jumped to 0.577, far exceeding pre-pandemic levels. Now tightly clustered with Google, Meta, and Amazon as the tech-finance axis of the recovery.',
+    nodes:[
+      {label:'MSFT',x:.5,y:.5,r:17,central:true},
+      {label:'GOOG',x:.25,y:.3,r:12},{label:'META',x:.75,y:.28,r:11},
+      {label:'AMZN',x:.2,y:.65,r:10},{label:'SPGI',x:.78,y:.65,r:8},
+      {label:'TSLA',x:.5,y:.18,r:8},{label:'MSCI',x:.82,y:.45,r:6},
+    ],
+    edges:[['MSFT','GOOG',.95],['MSFT','META',.88],['MSFT','AMZN',.82],['MSFT','SPGI',.7],['MSFT','TSLA',.75],['MSFT','MSCI',.65],['GOOG','META',.6],['AMZN','GOOG',.5]]
+  }
+};
+let netEra='before',netAnimProg=0,netAnimRaf=null,netAnimTarget=null;
+
+function setNetEra(era,btn){
+  netEra=era;
+  document.querySelectorAll('#net-timeline-btns .als-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=netEras[era];
+  document.getElementById('net-deg').textContent=d.deg;
+  document.getElementById('net-btw').textContent=d.btw;
+  document.getElementById('net-com').textContent=d.com;
+  document.getElementById('net-btw').style.color=d.col;
+  document.getElementById('net-era-desc').textContent=d.desc;
+  netAnimProg=0;
+  animateNetPage();
+}
+function initNetworkPage(){
+  animateNetPage();
+}
+function animateNetPage(){
+  if(netAnimRaf)cancelAnimationFrame(netAnimRaf);
+  const startT=performance.now();
+  function frame(now){
+    const t=Math.min((now-startT)/600,1);
+    drawNetPage(t);
+    if(t<1)netAnimRaf=requestAnimationFrame(frame);
+  }
+  netAnimRaf=requestAnimationFrame(frame);
+}
+function drawNetPage(t){
+  const cv=document.getElementById('net-c-page');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const d=netEras[netEra];
+  const W=cv.offsetWidth||360,H=160;cv.width=W;cv.height=H;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  // draw edges
+  d.edges.forEach(([a,b,w])=>{
+    const na=d.nodes.find(n=>n.label===a),nb=d.nodes.find(n=>n.label===b);if(!na||!nb)return;
+    const alpha=w*0.35*t;
+    ctx.strokeStyle=`rgba(27,43,75,${alpha})`;
+    ctx.lineWidth=w*2.5*t+0.5;
+    ctx.beginPath();ctx.moveTo(na.x*W,na.y*H);ctx.lineTo(nb.x*W,nb.y*H);ctx.stroke();
+  });
+  // draw nodes
+  d.nodes.forEach(n=>{
+    const px=n.x*W,py=n.y*H;
+    const r=n.r*Math.min(t*1.2,1);
+    if(n.central){
+      // glow ring for MSFT
+      ctx.beginPath();ctx.arc(px,py,r+6*t,0,Math.PI*2);
+      ctx.fillStyle=d.col+'22';ctx.fill();
+    }
+    ctx.beginPath();ctx.arc(px,py,r,0,Math.PI*2);
+    ctx.fillStyle=n.central?d.col:'#4A6FA5';ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    if(r>5){
+      ctx.fillStyle='#fff';
+      ctx.font=`${n.central?'700 ':''}${Math.max(7,Math.round(r*.65))}px Inter`;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(n.label,px,py);
+    }
+  });
+}
+// Legacy stubs so existing project-card code doesn't error
+function initNetwork(){
+  const cv=document.getElementById('net-c');if(!cv)return;
+  drawNet('net-c');
+}
+function filterNet(t,btn){
+  document.querySelectorAll('.proj-card#c4 .nf-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  drawNet('net-c');
+}
+function filterNetPage(t,btn){}
+// Keep legacy drawNet for project card
+const invs=[
+  {id:'msft',label:'MSFT',x:.5,y:.5,r:16,col:'#8B2E2E',type:'stock',deg:8},
+  {id:'dodge',label:'Dodge & Cox',x:.15,y:.22,r:10,col:'#1B2B4B',type:'value',deg:6},
+  {id:'gates',label:'Gates Found.',x:.78,y:.18,r:9,col:'#1B2B4B',type:'value',deg:7},
+  {id:'tiger',label:'Tiger Global',x:.83,y:.68,r:8,col:'#2C3E6B',type:'hedge',deg:5},
+  {id:'maverick',label:'Maverick',x:.68,y:.83,r:7,col:'#4A6FA5',type:'growth',deg:4},
+  {id:'valueact',label:'ValueAct',x:.22,y:.78,r:7,col:'#6B4A9B',type:'activist',deg:4},
+  {id:'thirdpt',label:'Third Point',x:.1,y:.52,r:6,col:'#6B4A9B',type:'activist',deg:3},
+  {id:'jensen',label:'Jensen Inv.',x:.6,y:.15,r:8,col:'#1B2B4B',type:'value',deg:5},
+  {id:'poland',label:'Polen Cap.',x:.88,y:.4,r:7,col:'#4A6FA5',type:'growth',deg:4},
+];
+const edges_legacy=[
+  ['dodge','msft',.9],['gates','msft',.95],['tiger','msft',.7],
+  ['maverick','msft',.6],['valueact','msft',.8],['thirdpt','msft',.65],
+  ['jensen','msft',.85],['poland','msft',.75],
+  ['dodge','gates',.4],['tiger','poland',.5],['dodge','jensen',.6],
+  ['valueact','thirdpt',.7],
+];
+let netFilter='all',hovNode=null;
+function drawNet(canvasId){
+  const cv=document.getElementById(canvasId||'net-c');if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const filter=netFilter;
+  const W=cv.offsetWidth||380,H=parseInt(cv.getAttribute('height'))||180;cv.width=W;cv.height=H;
+  ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
+  edges_legacy.forEach(([a,b,w])=>{
+    const na=invs.find(i=>i.id===a),nb=invs.find(i=>i.id===b);if(!na||!nb)return;
+    const vis=filter==='all'||na.type===filter||nb.type===filter||na.id==='msft'||nb.id==='msft';
+    ctx.strokeStyle=`rgba(27,43,75,${vis?w*.3:.03})`;ctx.lineWidth=w*2.5;
+    ctx.beginPath();ctx.moveTo(na.x*W,na.y*H);ctx.lineTo(nb.x*W,nb.y*H);ctx.stroke();
+  });
+  invs.forEach(inv=>{
+    const px=inv.x*W,py=inv.y*H;
+    const vis=filter==='all'||inv.type===filter||inv.id==='msft';
+    ctx.beginPath();ctx.arc(px,py,inv.r,0,Math.PI*2);
+    ctx.fillStyle=inv.col+(vis?'':'44');ctx.fill();
+    ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke();
+    if(inv.id==='msft'){ctx.fillStyle='#fff';ctx.font='700 9px Inter';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('MSFT',px,py);}
+    else if(vis&&inv.r>=7){ctx.fillStyle='rgba(0,0,0,.55)';ctx.font='8px Inter';ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(inv.label.split(' ')[0],px,py+inv.r+4);}
+  });
+}
+
+
+/* ── NETWORK: CO-INVESTMENT RANKING (interactive SVG) ── */
+(function(){
+  const STOCKS=[
+    {t:'AMZN', n:158,s:'t'},{t:'GOOG', n:142,s:'t'},{t:'GOOGL',n:135,s:'t'},
+    {t:'META', n:135,s:'t'},{t:'AAPL', n:118,s:'t'},{t:'NVDA', n:102,s:'t'},
+    {t:'BRK.B',n:95, s:'f'},{t:'JPM',  n:88, s:'f'},{t:'ADBE', n:65, s:'t'},
+    {t:'WFC',  n:80, s:'f'},{t:'BAC',  n:75, s:'f'},{t:'V',    n:52, s:'f'},
+  ];
+  const COL={t:'#2563eb',f:'#dc2626',o:'#16a34a'};
+  const COL_DIM={t:'#93aff5',f:'#f5a8a8',o:'#86d4a0'};
+  const SECTOR={t:'Tech',f:'Finance',o:'Other'};
+  const maxN=STOCKS[0].n;
+
+  function renderCoinvest(hovIdx){
+    const el=document.getElementById('coinvest-chart');
+    if(!el)return;
+    const W=el.offsetWidth||400;
+    const LABEL_W=56, BAR_W=W-LABEL_W-44, ROW_H=24, PAD_TOP=6;
+    const H=STOCKS.length*ROW_H+PAD_TOP+18;
+
+    let rows='';
+    STOCKS.forEach((s,i)=>{
+      const isHov=(hovIdx===i);
+      const isDim=(hovIdx!==undefined && hovIdx!==i);
+      const y=PAD_TOP+i*ROW_H;
+      const barW=Math.max(2,(s.n/maxN)*BAR_W);
+      const col=isDim?COL_DIM[s.s]:COL[s.s];
+      const midY=y+ROW_H*0.5;
+      // proportional thickness: min 3px, max 10px based on shared count
+      const barH=Math.round(3+(s.n/maxN)*7);
+      const dotR=isHov?Math.max(6,barH/2+2):Math.max(4,barH/2+1);
+
+      // invisible hit target
+      rows+=`<rect x="0" y="${y}" width="${W}" height="${ROW_H}" fill="${isHov?'rgba(0,0,0,.04)':'transparent'}" data-i="${i}" class="ci-row" style="cursor:pointer"/>`;
+      // track
+      rows+=`<rect x="${LABEL_W}" y="${midY-3}" width="${BAR_W}" height="6" rx="3" fill="rgba(0,0,0,.05)" pointer-events="none"/>`;
+      // bar — proportional thickness
+      rows+=`<rect x="${LABEL_W}" y="${midY-barH/2}" width="${barW}" height="${barH}" rx="${barH/2}" fill="${col}" pointer-events="none"/>`;
+      // dot
+      rows+=`<circle cx="${LABEL_W+barW}" cy="${midY}" r="${dotR}" fill="${col}" stroke="white" stroke-width="${isHov?2:1.5}" pointer-events="none"/>`;
+      if(isHov) rows+=`<circle cx="${LABEL_W+barW}" cy="${midY}" r="2.5" fill="white" pointer-events="none"/>`;
+      // ticker
+      rows+=`<text x="${LABEL_W-7}" y="${midY+3.5}" text-anchor="end" font-family="Inter,sans-serif" font-size="${isHov?10.5:9.5}" font-weight="${isHov?700:600}" fill="${isDim?'rgba(0,0,0,.25)':col}" pointer-events="none">${s.t}</text>`;
+      // value
+      if(isHov || hovIdx===undefined){
+        rows+=`<text x="${LABEL_W+barW+(isHov?dotR+5:dotR+3)}" y="${midY+3.5}" font-family="Inter,sans-serif" font-size="${isHov?10:9}" font-weight="${isHov?700:600}" fill="${col}" pointer-events="none">${s.n}</text>`;
+      }
+      // sector badge on hover
+      if(isHov){
+        const badgeX=LABEL_W+barW+dotR+32;
+        rows+=`<rect x="${badgeX-15}" y="${midY-7}" width="34" height="14" rx="3" fill="${col}22" pointer-events="none"/>`;
+        rows+=`<text x="${badgeX+2}" y="${midY+3.5}" text-anchor="middle" font-family="Inter,sans-serif" font-size="8" font-weight="700" fill="${col}" pointer-events="none">${SECTOR[s.s]}</text>`;
+      }
+    });
+
+    // x-axis ticks
+    let axis='';
+    [0,40,80,120,158].forEach(v=>{
+      const x=LABEL_W+(v/maxN)*BAR_W;
+      axis+=`<text x="${x}" y="${H-2}" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="rgba(0,0,0,.32)">${v}</text>`;
+      axis+=`<line x1="${x}" y1="${PAD_TOP}" x2="${x}" y2="${H-18}" stroke="rgba(0,0,0,.05)" stroke-width="1"/>`;
+    });
+
+    el.innerHTML=`<svg id="ci-svg" width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block">${axis}${rows}</svg>`;
+
+    // attach hover events
+    el.querySelectorAll('.ci-row').forEach(rect=>{
+      const idx=parseInt(rect.dataset.i);
+      rect.addEventListener('mouseenter',()=>renderCoinvest(idx));
+      rect.addEventListener('mouseleave',()=>renderCoinvest(undefined));
+    });
+  }
+
+  function initCoinvest(){
+    if(!document.getElementById('coinvest-chart'))return;
+    renderCoinvest(undefined);
+  }
+  window.initCoinvest=initCoinvest;
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(initCoinvest,300));
+})();
+
+
+/* ── DEMO 6: AGENT SCORECARD (SVG) ── */
+(function(){
+  const AGENTS=[
+    {name:'Random',     wealth:231016, winrate:46.63, drawdown:46694, exposure:74.9, col:'#dc2626'},
+    {name:'Momentum',   wealth:159935, winrate:46.02, drawdown:36474, exposure:52.0, col:'#2563eb'},
+    {name:'Balanced',   wealth:132730, winrate:52.47, drawdown:23949, exposure:43.0, col:'#16a34a'},
+    {name:'RSI',        wealth:128616, winrate:50.50, drawdown:28496, exposure:42.0, col:'#9333ea'},
+    {name:'Alternating',wealth:113277, winrate:47.33, drawdown:24964, exposure:37.0, col:'#d97706'},
+  ];
+
+  const METRICS={
+    wealth:  {key:'wealth',  label:'Total Wealth', unit:'£', fmt:v=>'£'+Math.round(v/1000)+'k',   higher:'better',
+              insight:'Random Traders dominate on wealth — a counterintuitive result. Their unstructured, Bitcoin-heavy strategy captured price surges that systematic chartists often missed by waiting for signals.'},
+    winrate: {key:'winrate', label:'Win Rate',     unit:'%', fmt:v=>v.toFixed(1)+'%',               higher:'better',
+              insight:'Balanced chartists edge out with the highest win rate (52.47%), combining momentum and RSI signals. Contrarian logic (RSI) outperforms pure trend-following on win rate, even if wealth trails.'},
+    drawdown:{key:'drawdown',label:'Max Drawdown', unit:'£', fmt:v=>'£'+Math.round(v/1000)+'k',    higher:'worse',
+              insight:'Random Traders face catastrophic drawdowns (£46,694) — nearly double the safest agent. Balanced chartists minimise downside risk, making them far more suitable for risk-averse investors.'},
+    exposure:{key:'exposure',label:'Exposure Time',unit:'%', fmt:v=>v.toFixed(0)+'%',               higher:'varies',
+              insight:'Random Traders hold positions 75% of the time — nearly double some chartists. Chartists time their entries; Random Traders just stay in. High exposure drove their wealth gains, but also enormous drawdowns.'},
+  };
+
+  let currentMetric='wealth';
+
+  function renderScorecard(){
+    const el=document.getElementById('sc-chart');
+    if(!el)return;
+    const m=METRICS[currentMetric];
+    const sorted=[...AGENTS].sort((a,b)=>b[m.key]-a[m.key]);
+    const W=el.offsetWidth||400;
+    const LABEL_W=88, VAL_W=46, BAR_W=W-LABEL_W-VAL_W-8, ROW_H=34, PAD_TOP=8;
+    const H=sorted.length*ROW_H+PAD_TOP+16;
+    const maxVal=Math.max(...sorted.map(a=>a[m.key]));
+
+    let rows='';
+    sorted.forEach((agent,i)=>{
+      const y=PAD_TOP+i*ROW_H;
+      const barW=Math.max(2,(agent[m.key]/maxVal)*BAR_W);
+      const midY=y+ROW_H*0.5;
+      const isFirst=i===0;
+
+      // name — left-aligned inside label area, clipped to it
+      rows+=`<text x="0" y="${midY+4}" font-family="Inter,sans-serif" font-size="${isFirst?11:10.5}" font-weight="${isFirst?700:500}" fill="${isFirst?agent.col:'rgba(0,0,0,.65)'}">${agent.name}</text>`;
+      // track line
+      rows+=`<line x1="${LABEL_W}" y1="${midY}" x2="${LABEL_W+BAR_W}" y2="${midY}" stroke="rgba(0,0,0,.08)" stroke-width="2"/>`;
+      // lollipop stem
+      rows+=`<line x1="${LABEL_W}" y1="${midY}" x2="${LABEL_W+barW}" y2="${midY}" stroke="${agent.col}" stroke-width="${isFirst?3:2}" stroke-linecap="round"/>`;
+      // circle dot
+      rows+=`<circle cx="${LABEL_W+barW}" cy="${midY}" r="${isFirst?7:5.5}" fill="${agent.col}"/>`;
+      if(isFirst) rows+=`<circle cx="${LABEL_W+barW}" cy="${midY}" r="2.5" fill="white"/>`;
+      // value — right of bar
+      rows+=`<text x="${LABEL_W+barW+9}" y="${midY+4}" font-family="Inter,sans-serif" font-size="${isFirst?10.5:9.5}" font-weight="700" fill="${agent.col}">${m.fmt(agent[m.key])}</text>`;
+    });
+
+    // grid lines + x-axis labels
+    const ticks=4;
+    let grid='';
+    for(let i=0;i<=ticks;i++){
+      const x=LABEL_W+(i/ticks)*BAR_W;
+      const v=maxVal*(i/ticks);
+      const label=m.unit==='£'?'£'+Math.round(v/1000)+'k':Math.round(v)+(m.unit==='%'?'%':'');
+      grid+=`<line x1="${x}" y1="${PAD_TOP}" x2="${x}" y2="${H-16}" stroke="rgba(0,0,0,.05)" stroke-width="1"/>`;
+      grid+=`<text x="${x}" y="${H-2}" text-anchor="middle" font-family="Inter,sans-serif" font-size="8.5" fill="rgba(0,0,0,.32)">${label}</text>`;
+    }
+
+    el.innerHTML=`<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="display:block;overflow:visible">${grid}${rows}</svg>`;
+    document.getElementById('sc-insight').textContent=m.insight;
+  }
+
+  window.setScorecardMetric=function(metric,btn){
+    currentMetric=metric;
+    document.querySelectorAll('#sc-tabs .als-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    renderScorecard();
+  };
+  window.initScorecard=function(){
+    if(!document.getElementById('sc-chart'))return;
+    renderScorecard();
+  };
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(document.getElementById('sc-chart'))renderScorecard();},400));
+})();
+
+
+/* ── ALS CONFUSION MATRIX ── */
+(function(){
+  // From Table 3 (test confusion matrices, epoch 30)
+  // [TP_dysarthric, FN_dysarthric, FP_healthy, TN_healthy]
+  const MODELS={
+    ft: {label:'Fine-tuned Wav2Vec',col:'#16a34a',f1:'0.97',prec:'0.94',rec:'0.99',
+          matrix:[[94,6],[1,99]]},   // D→D=94, D→H=6, H→D=1, H→H=99
+    frz:{label:'Frozen Wav2Vec',    col:'#d97706',f1:'0.81',prec:'0.80',rec:'0.82',
+          matrix:[[80,20],[18,82]]},
+    mfc:{label:'MFCCs-NN',          col:'#2563eb',f1:'0.95',prec:'0.94',rec:'0.95',
+          matrix:[[94,6],[5,95]]},
+  };
+  let currentCM='ft';
+
+  function setAlsCM(m, btn){
+    currentCM=m;
+    document.querySelectorAll('#als-cm-btns .als-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const mod=MODELS[m];
+    document.getElementById('als-cm-f1').textContent=mod.f1;
+    document.getElementById('als-cm-f1').style.color=mod.col;
+    document.getElementById('als-cm-prec').textContent=mod.prec;
+    document.getElementById('als-cm-rec').textContent=mod.rec;
+    drawAlsCM();
+  }
+
+  function drawAlsCM(){
+    const cv=document.getElementById('als-cm-c');if(!cv)return;
+    const ctx=cv.getContext('2d');
+    const W=cv.offsetWidth||320,H=150;
+    cv.width=W;cv.height=H;
+    const mod=MODELS[currentCM];
+    const m=mod.matrix; // [[TP,FN],[FP,TN]]
+    const labels=['Dysarthric','Healthy'];
+    const PAD={l:72,t:28,r:12,b:32};
+    const cellW=(W-PAD.l-PAD.r)/2,cellH=(H-PAD.t-PAD.b)/2;
+    const total=200;
+
+    ctx.fillStyle='#f7f3ee';ctx.fillRect(0,0,W,H);
+
+    // Axis labels
+    ctx.fillStyle='rgba(0,0,0,.45)';ctx.font='600 8px Inter';ctx.textAlign='center';
+    ctx.fillText('PREDICTED',PAD.l+(W-PAD.l-PAD.r)/2,H-6);
+    ctx.save();ctx.translate(10,PAD.t+(H-PAD.t-PAD.b)/2);ctx.rotate(-Math.PI/2);
+    ctx.fillText('ACTUAL',0,0);ctx.restore();
+
+    // Predicted headers
+    labels.forEach((l,i)=>{
+      ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='700 8px Inter';ctx.textAlign='center';
+      ctx.fillText(l,PAD.l+cellW*i+cellW/2,PAD.t-6);
+    });
+    // Actual headers
+    labels.forEach((l,i)=>{
+      ctx.fillStyle='rgba(0,0,0,.5)';ctx.font='700 8px Inter';ctx.textAlign='right';
+      ctx.fillText(l,PAD.l-6,PAD.t+cellH*i+cellH/2+3);
+    });
+
+    // Cells
+    [[0,0],[0,1],[1,0],[1,1]].forEach(([r,c])=>{
+      const val=m[r][c];
+      const x=PAD.l+c*cellW,y=PAD.t+r*cellH;
+      const isDiag=r===c;
+      const intensity=val/total;
+      // Background
+      if(isDiag){
+        ctx.fillStyle=`rgba(${mod.col==='#16a34a'?'22,163,74':mod.col==='#d97706'?'217,119,6':'37,99,235'},${0.12+intensity*0.55})`;
+      } else {
+        ctx.fillStyle=`rgba(220,38,38,${0.05+intensity*0.5})`;
+      }
+      ctx.fillRect(x,y,cellW,cellH);
+      ctx.strokeStyle='rgba(0,0,0,.1)';ctx.lineWidth=1;ctx.strokeRect(x,y,cellW,cellH);
+      // Value
+      ctx.fillStyle=isDiag?mod.col:'#dc2626';
+      ctx.font=`700 ${val>=10?16:14}px Inter`;ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(val,x+cellW/2,y+cellH/2-4);
+      ctx.fillStyle='rgba(0,0,0,.35)';ctx.font='8px Inter';ctx.textBaseline='middle';
+      ctx.fillText(`${((val/total)*100).toFixed(0)}%`,x+cellW/2,y+cellH/2+9);
+    });
+    ctx.textBaseline='alphabetic';
+  }
+
+  window.setAlsCM=setAlsCM;
+  window.drawAlsCM=drawAlsCM;
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(document.getElementById('als-cm-c'))drawAlsCM();},300));
+})();
+
+/* ── SPOTIFY SONG LIFECYCLE TRAJECTORIES ── */
+(function(){
+  // Trajectory shapes derived from paper findings:
+  // C0 Mainstream: fast peak (~31d summer mean), quick fade — high energy/dance pop
+  // C1 Acoustic: slow build (~54d winter mean), sustained plateau — longer peak duration
+  // C2 High-Impact: fast peak, sustained top-chart presence — 69% reach Top 20
+  // X axis = weeks on chart (0–26); Y axis = normalised popularity rank (1=Top 20, 0=off chart)
+
+  const CLUSTERS=[
+    {key:'mainstream',label:'C0 Mainstream',col:'#1B2B4B',tip:'Fast spike ~31 days, rapid decline. Only 14% reach Top 20. Classic summer pop lifecycle.'},
+    {key:'acoustic',  label:'C1 Acoustic',  col:'#6B4A9B',tip:'Slow build ~54 days, sustained peak. Winter/fall favourite. Longer time on chart.'},
+    {key:'impact',    label:'C2 High-Impact',col:'#B8520A',tip:'Fast peak, high ceiling — 69% reach Top 20. Loudest cluster (0.90). Stays charted longest.'},
+  ];
+
+  // Parametric popularity curves (normalised 0–1, 26 weeks)
+  function curve(t, peakWeek, peakHeight, holdWeeks, decayRate){
+    if(t<=peakWeek) return peakHeight*(t/peakWeek);
+    const postPeak=t-peakWeek;
+    if(postPeak<=holdWeeks) return peakHeight;
+    return Math.max(0, peakHeight*Math.exp(-decayRate*(postPeak-holdWeeks)));
+  }
+  const WEEKS=26;
+  const PARAMS={
+    mainstream:{peakWeek:4.5,peakH:.78,hold:1,decay:.38},
+    acoustic:   {peakWeek:8,  peakH:.72,hold:5,decay:.15},
+    impact:     {peakWeek:5,  peakH:.98,hold:7,decay:.22},
+  };
+
+  let focusKey='all';
+
+  function drawTraj(){
+    const cv=document.getElementById('sp-traj-c');if(!cv)return;
+    const ctx=cv.getContext('2d');
+    const W=cv.offsetWidth||320,H=180;
+    cv.width=W*window.devicePixelRatio||W;cv.height=H*window.devicePixelRatio||H;
+    cv.style.width=W+'px';cv.style.height=H+'px';
+    if(window.devicePixelRatio>1)ctx.scale(window.devicePixelRatio,window.devicePixelRatio);
+
+    ctx.fillStyle='#ffffff';ctx.fillRect(0,0,W,H);
+    const PAD={l:36,r:14,t:16,b:28};
+    const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+
+    // Grid
+    [0.25,0.5,0.75,1].forEach(v=>{
+      const y=PAD.t+cH*(1-v);
+      ctx.strokeStyle='rgba(0,0,0,.06)';ctx.lineWidth=1;
+      ctx.beginPath();ctx.moveTo(PAD.l,y);ctx.lineTo(W-PAD.r,y);ctx.stroke();
+    });
+    // Y labels
+    ctx.fillStyle='rgba(0,0,0,.3)';ctx.font='7px Inter';ctx.textAlign='right';
+    [['Top 20',1],['.75',.75],['.50',.5],['.25',.25]].forEach(([l,v])=>{
+      ctx.fillText(l,PAD.l-3,PAD.t+cH*(1-v)+3);
+    });
+    // X labels — weeks
+    [0,4,8,13,18,22,26].forEach(w=>{
+      const x=PAD.l+cW*(w/WEEKS);
+      ctx.fillStyle='rgba(0,0,0,.3)';ctx.font='7px Inter';ctx.textAlign='center';
+      ctx.fillText('W'+w,x,H-PAD.b+10);
+    });
+    // X axis label
+    ctx.fillStyle='rgba(0,0,0,.35)';ctx.font='7px Inter';ctx.textAlign='center';
+    ctx.fillText('Weeks on Chart',PAD.l+cW/2,H-2);
+
+    // Draw curves
+    CLUSTERS.forEach(cl=>{
+      const p=PARAMS[cl.key];
+      const dimmed=focusKey!=='all'&&focusKey!==cl.key;
+      ctx.save();
+      ctx.globalAlpha=dimmed?0.15:1;
+      ctx.beginPath();
+      for(let i=0;i<=100;i++){
+        const t=(i/100)*WEEKS;
+        const v=curve(t,p.peakWeek,p.peakH,p.hold,p.decay);
+        const x=PAD.l+cW*(t/WEEKS);
+        const y=PAD.t+cH*(1-v);
+        i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+      }
+      ctx.strokeStyle=cl.col;ctx.lineWidth=dimmed?1:2.5;ctx.stroke();
+      // Area fill
+      if(!dimmed){
+        const endX=PAD.l+cW;const baseY=PAD.t+cH;
+        ctx.lineTo(endX,baseY);ctx.lineTo(PAD.l,baseY);ctx.closePath();
+        ctx.fillStyle=cl.col+'14';ctx.fill();
+      }
+      // Label at peak
+      const peakX=PAD.l+cW*(p.peakWeek/WEEKS)+cW*(p.hold*0.5/WEEKS);
+      const peakY=PAD.t+cH*(1-p.peakH)-8;
+      if(!dimmed){
+        ctx.fillStyle=cl.col;ctx.font='700 8px Inter';ctx.textAlign='center';
+        ctx.fillText(cl.label.split('—')[1]?.trim()||cl.label,peakX,peakY);
+      }
+      ctx.restore();
+    });
+  }
+
+  window.spTrajFocus=function(key,btn){
+    focusKey=key;
+    document.querySelectorAll('#sp-traj-btns .als-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const tip=document.getElementById('sp-traj-tip');
+    if(tip){
+      if(key==='all') tip.innerHTML='<strong>All three clusters</strong> — Mainstream spikes fast and fades. Acoustic builds slowly and sustains. High-Impact peaks hard and holds the top longest.';
+      else{
+        const cl=CLUSTERS.find(c=>c.key===key);
+        tip.innerHTML=`<strong>${cl.label}</strong> — ${cl.tip}`;
+      }
+    }
+    drawTraj();
+  };
+
+  function initSpTraj(){
+    const cv=document.getElementById('sp-traj-c');if(!cv)return;
+    drawTraj();
+  }
+  window.initSpTraj=initSpTraj;
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>{if(document.getElementById('sp-traj-c'))initSpTraj();},300));
+})();
+
+/* ── SPOTIFY PAGE ── */
+const spClusters=[
+  {name:'Cluster 0 — Mainstream',col:'#1B2B4B',pct:'14% reach Top 20',
+   desc:'High energy, high danceability, low acousticness, high loudness. Fast peaks, summer-dominant pop anthems.',
+   c:{e:.70,d:.70,a:.15,l:.82}},
+  {name:'Cluster 1 — Acoustic',col:'#6B4A9B',pct:'17% reach Top 20',
+   desc:'Lower energy, moderate danceability, high acousticness. Gradual rise, longer peak duration. Winter and fall favourites.',
+   c:{e:.45,d:.54,a:.53,l:.45}},
+  {name:'Cluster 2 — High-Impact',col:'#B8520A',pct:'69% reach Top 20 \u2605',
+   desc:'High energy, very high loudness, low acousticness. Peaks fast and stays there \u2014 69% hit the Top 20.',
+   c:{e:.65,d:.55,a:.21,l:.90}},
+];
+// C2 danceability (0.75): not stated in paper. Informed estimate \u2014 paper notes negative
+// danceability\u2013time-to-peak correlation; C2 peaks fastest so likely below C0 (0.70)
+// but above C1 (0.54). C1 loudness not stated; estimated from typical acoustic track range.
+const SP_AXES=['Energy','Danceability','Acousticness','Loudness'];
+let spRadarAnim=null;
+let spCurrentDraw={e:.70,d:.70,a:.15,l:.82};
+
+function spRadarDraw(vals,clusterIdx){
+  const canvas=document.getElementById('sp-radar');
+  if(!canvas)return;
+  const dpr=window.devicePixelRatio||1;
+  const cssW=260,cssH=220;
+  canvas.width=cssW*dpr;
+  canvas.height=cssH*dpr;
+  const ctx=canvas.getContext('2d');
+  ctx.scale(dpr,dpr);
+  const W=cssW,H=cssH;
+  const cx=W/2,cy=H/2,r=Math.min(W,H)*0.37;
+  const n=4;
+  ctx.clearRect(0,0,W,H);
+  // grid rings
+  for(let ring=1;ring<=4;ring++){
+    ctx.beginPath();
+    for(let i=0;i<n;i++){
+      const ang=(-Math.PI/2)+(2*Math.PI*i/n);
+      const rr=r*(ring/4);
+      const x=cx+Math.cos(ang)*rr,y=cy+Math.sin(ang)*rr;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.strokeStyle='rgba(0,0,0,0.07)';ctx.lineWidth=1;ctx.stroke();
+    if(ring===4){ctx.fillStyle='rgba(0,0,0,0.02)';ctx.fill();}
+  }
+  // spokes + labels
+  SP_AXES.forEach((lbl,i)=>{
+    const ang=(-Math.PI/2)+(2*Math.PI*i/n);
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(ang)*r,cy+Math.sin(ang)*r);
+    ctx.strokeStyle='rgba(0,0,0,0.1)';ctx.lineWidth=1;ctx.stroke();
+    const lx=cx+Math.cos(ang)*(r+20),ly=cy+Math.sin(ang)*(r+20);
+    ctx.font='bold 9px Inter,sans-serif';ctx.fillStyle='#4A4E5A';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(lbl,lx,ly);
+  });
+  // cluster centroid ghost shapes
+  spClusters.forEach((cl,ci)=>{
+    const cv=[cl.c.e, cl.c.d, cl.c.a, cl.c.l];
+    ctx.beginPath();
+    cv.forEach((v,i)=>{
+      const ang=(-Math.PI/2)+(2*Math.PI*i/n);
+      const rr=r*v;
+      const x=cx+Math.cos(ang)*rr,y=cy+Math.sin(ang)*rr;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    });
+    ctx.closePath();
+    ctx.strokeStyle=cl.col+'55';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle=cl.col+'10';ctx.fill();
+  });
+  // user shape
+  const uv=[vals.e,vals.d,vals.a,vals.l];
+  const bestIdx=clusterIdx!==undefined?clusterIdx:spBestCluster(vals);
+  const col=spClusters[bestIdx].col;
+  ctx.beginPath();
+  uv.forEach((v,i)=>{
+    const ang=(-Math.PI/2)+(2*Math.PI*i/n);
+    const rr=r*v;
+    const x=cx+Math.cos(ang)*rr,y=cy+Math.sin(ang)*rr;
+    i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.strokeStyle=col;ctx.lineWidth=2.5;ctx.stroke();
+  ctx.fillStyle=col+'33';ctx.fill();
+  // dots
+  uv.forEach((v,i)=>{
+    const ang=(-Math.PI/2)+(2*Math.PI*i/n);
+    const rr=r*v;
+    ctx.beginPath();ctx.arc(cx+Math.cos(ang)*rr,cy+Math.sin(ang)*rr,4,0,Math.PI*2);
+    ctx.fillStyle=col;ctx.fill();
+  });
+}
+
+function spBestCluster(vals){
+  const keys=['e','d','a','l'];
+  let best=0,bestD=Infinity;
+  spClusters.forEach((cl,i)=>{
+    const d=keys.reduce((s,k)=>s+(cl.c[k]-vals[k])**2,0);
+    if(d<bestD){bestD=d;best=i;}
+  });
+  return best;
+}
+
+function spUpdate(){
+  const vals={
+    e:parseFloat(document.getElementById('sp-e').value),
+    d:parseFloat(document.getElementById('sp-d').value),
+    a:parseFloat(document.getElementById('sp-a').value),
+    l:parseFloat(document.getElementById('sp-l').value),
+  };
+  document.getElementById('sp-ev').textContent=vals.e.toFixed(2);
+  document.getElementById('sp-dv').textContent=vals.d.toFixed(2);
+  document.getElementById('sp-av').textContent=vals.a.toFixed(2);
+  document.getElementById('sp-lv').textContent=vals.l.toFixed(2);
+  const best=spBestCluster(vals);
+  const cl=spClusters[best];
+  if(spRadarAnim)cancelAnimationFrame(spRadarAnim);
+  const start={...spCurrentDraw};
+  const startT=performance.now();
+  const dur=300;
+  function frame(now){
+    const t=Math.min((now-startT)/dur,1);
+    const ease=1-Math.pow(1-t,3);
+    const cur={};
+    ['e','d','a','l'].forEach(k=>{cur[k]=start[k]+(vals[k]-start[k])*ease;});
+    spRadarDraw(cur,best);
+    if(t<1)spRadarAnim=requestAnimationFrame(frame);
+    else spCurrentDraw={...vals};
+  }
+  spRadarAnim=requestAnimationFrame(frame);
+  document.getElementById('sp-cl-name').textContent=cl.name;
+  document.getElementById('sp-dot').style.background=cl.col;
+  document.getElementById('sp-match-pct').textContent=cl.pct;
+  document.getElementById('sp-match-bar').style.background=cl.col;
+  const pcts=[14,17,69];
+  document.getElementById('sp-match-bar').style.width=pcts[best]+'%';
+  document.getElementById('sp-cl-desc').textContent=cl.desc;
+}
+
+/* ── SPOTIFY PAPER NAVIGATOR ── */
+let spPaperPage=0;
+const SP_TOTAL_PAGES=11;
+function spInitPaper(){
+  const container=document.getElementById('sp-paper-pages');
+  if(!container||container.children.length>0)return;
+  for(let i=1;i<=SP_TOTAL_PAGES;i++){
+    const div=document.createElement('div');
+    div.className='sp-paper-page';
+    div.style.transform=`translateX(${(i-1)*100}%)`;
+    div.style.position=i===1?'relative':'absolute';
+    div.style.top='0';div.style.left='0';div.style.width='100%';
+    const img=document.createElement('img');
+    // Pages are stored as jpegs inside the renamed zip we extracted earlier
+    // We embed them as object URLs from the in-memory extracted images
+    img.alt=`Paper page ${i}`;
+    img.style.width='100%';
+    img.style.display='block';
+    // placeholder until images load — show page number
+    img.onerror=()=>{
+      div.innerHTML=`<div style="padding:3rem;text-align:center;color:var(--soft);font-size:.85rem">Page ${i} — paper image not yet linked.<br/>Add image paths once hosted.</div>`;
+    };
+    // Try to load from extracted zip location (works when served locally)
+    img.src=`paper_pages/${i}.jpeg`;
+    div.appendChild(img);
+    container.appendChild(div);
+  }
+  spPaperRender();
+}
+function spPaperNav(dir){
+  spPaperPage=Math.max(0,Math.min(SP_TOTAL_PAGES-1,spPaperPage+dir));
+  spPaperRender();
+}
+function spPaperRender(){
+  const pages=document.querySelectorAll('.sp-paper-page');
+  pages.forEach((p,i)=>{
+    p.style.transform=`translateX(${(i-spPaperPage)*100}%)`;
+    p.style.position=i===spPaperPage?'relative':'absolute';
+  });
+  document.getElementById('sp-page-counter').textContent=`Page ${spPaperPage+1} of ${SP_TOTAL_PAGES}`;
+  document.getElementById('sp-prev').disabled=spPaperPage===0;
+  document.getElementById('sp-next').disabled=spPaperPage===SP_TOTAL_PAGES-1;
+}
+</script>
+</body>
+</html>
