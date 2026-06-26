@@ -1568,7 +1568,8 @@ function updateUI(id){
   const counter=document.getElementById('page-counter');
   if(counter)counter.textContent=`${String(idx+1).padStart(2,'0')} — ${PAGE_LABELS[id]}`;
   document.body.dataset.page=id;
-  try{if(location.hash!==`#${id}`)history.replaceState(null, '', `#${id}`);
+  try{if(location.hash!==`#${id}`)history.replaceState(null,'',`#${id}`);}catch(e){}
+}
 
 function onPageEnter(id){
   if(id==='projects'){
@@ -1624,7 +1625,7 @@ function onPageEnter(id){
   }
 }
 
-function goToPage(id, direction, addHistory = true){
+function goToPage(id,direction){
   if(isTransitioning||id===currentPage||getPageIndex(id)<0)return;
   const from=getPageEl(currentPage),to=getPageEl(id);
   if(!from||!to)return;
@@ -1648,12 +1649,11 @@ function goToPage(id, direction, addHistory = true){
   setTimeout(()=>{
     from.classList.remove(exitCls);
     to.classList.remove(enterCls);
-    currentPage = id;
-    history.pushState({ page: id }, "", `#${id}`);
+    currentPage=id;
     updateUI(id);
     onPageEnter(id);
-    isTransitioning = false;
-}, DUR);
+    isTransitioning=false;
+  },DUR);
 }
 
 function goNext(){const i=getPageIndex(currentPage);if(i<PAGE_ORDER.length-1)goToPage(PAGE_ORDER[i+1],1);}
@@ -1732,14 +1732,11 @@ function initPageRouter(){
     updateUI(hash);
     onPageEnter(hash);
   }else updateUI(currentPage);
-  window.addEventListener('popstate', () => {
-  const raw = location.hash.replace('#','');
-  const page = { hero:'about' }[raw] || raw || 'about';
-
-  if (PAGE_ORDER.includes(page) && page !== currentPage) {
-    goToPage(page, undefined, false);
-  }
-});
+  window.addEventListener('hashchange',()=>{
+    const raw=location.hash.replace('#','');
+    const h={hero:'about'}[raw]||raw;
+    if(h&&PAGE_ORDER.includes(h)&&h!==currentPage)goToPage(h);
+  });
 }
 
 /* ── EXPERIENCE TABS ── */
